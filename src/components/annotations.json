@@ -1,0 +1,67 @@
+[
+    [
+        {
+            "type": "State",
+            "paras": {
+                "target": "耿马"
+            }
+        },
+        {
+            "type": "State",
+            "paras": {
+                "target": "勐琏"
+            }
+        },
+        {
+            "type": "Geography",
+            "paras": {
+                "target_1": "耿马",
+                "target_2": "勐琏",
+                "direction": "南"
+            }
+        }
+    ],
+    [
+        {
+            "type": "State",
+            "paras": {
+                "target": "耿马"
+            }
+        },
+        {
+            "type": "State",
+            "paras": {
+                "target": "喳哩江"
+            }
+        },
+        {
+            "type": "Geography",
+            "paras": {
+                "target_1": "耿马",
+                "target_2": "喳哩江",
+                "direction": "西"
+            }
+        }
+    ],
+    [
+        {
+            "type": "State",
+            "paras": {
+                "target": "耿马"
+            }
+        },
+        {
+            "type": "State",
+            "paras": {
+                "target": "孟定府"
+            }
+        },
+        {
+            "type": "Geography",
+            "paras": {
+                "target_1": "耿马",
+                "target_2": "孟定府"
+            }
+        }
+    ]
+]
