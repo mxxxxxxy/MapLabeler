@@ -1,6 +1,5 @@
 <template>
-  <div class="svg-plotter-container"
-    :style="{ height: containerHeight + 'px', width: containerWidth + 'px', left: left + 'px', top: top + 'px' }">
+  <div class="svg-plotter-container" :style="{ height: containerHeight + 'px', width: containerWidth + 'px', left: left + 'px', top: top + 'px' }">
     <!-- 控制面板 -->
     <div class="control-container">
       <div class="ctrl-bottom-right">
@@ -116,9 +115,9 @@ const data = useStoreData();
 // zoom、pan 相关状态
 const width = ref(window.innerWidth);
 const height = ref(window.innerHeight);
-const scale = ref(0.85768);
-const translateX = ref(23.2523);
-const translateY = ref(-300.932);
+const scale = ref(0.7);
+const translateX = ref(500);
+const translateY = ref(20);
 
 
 
