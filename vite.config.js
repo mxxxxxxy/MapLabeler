@@ -10,5 +10,5 @@ export default defineConfig({
         { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
       ],
     },
-    base: './',
+    base: mode === 'development' ? './' : '/viewer/',
 })
