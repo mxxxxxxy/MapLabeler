@@ -4,20 +4,10 @@
     <div class="control-container">
       <div class="ctrl-bottom-right">
         <div class="ctrl-group">
-          <button
-            class="ctrl-zoom-in"
-            type="button"
-            aria-label="Zoom in"
-            @click="zoomIn"
-          >
+          <button class="ctrl-zoom-in" type="button" aria-label="Zoom in" @click="zoomIn">
             <span class="icon" aria-hidden="true" title="放大"></span>
           </button>
-          <button
-            class="ctrl-zoom-out"
-            type="button"
-            aria-label="Zoom out"
-            @click="zoomOut"
-          >
+          <button class="ctrl-zoom-out" type="button" aria-label="Zoom out" @click="zoomOut">
             <span class="icon" aria-hidden="true" title="缩小"></span>
           </button>
         </div>
@@ -36,79 +26,47 @@
       <g id="map-container" ref="map">
         <!-- 底图 -->
         <g v-if="state.baseMapVisible">
-          <image
-            class="base-map"
-            href="/merged_map_gaode.png"
-            x="0"
-            y="0"
-            width="2048"
-            height="1536"
-          />
+          <image class="base-map" href="/Changan.png" x="0" y="0" width="1039" height="1239" />
         </g>
 
-        <!-- 区域 -->
+        <!-- 城门 -->
         <g class="areas" v-if="state.areasVisible">
-          <polygon
-            v-for="(points, name) in data.areaCoordinates"
-            :key="name"
-            :id="name"
-            :points="formatPoints(points)"
-            stroke="rgba(107,203,215,1)"
-            fill="rgba(228,243,246,0.9)"
-            stroke-width="2"
-            :class="{ highlight: state.hoveredElement === name }"
-            @mouseover="state.hoveredElement = name"
-            @mouseout="state.hoveredElement = null"
-            @click="state.focusedElementId = name"
-          />
+          <path v-for="(attr, name) in data.wall" :key="name" :id="name" :d="attr.d" :stroke="attr.stroke"
+            fill="rgba(228,243,246,0.9)" :stroke-width="attr['stroke-width']"
+            :class="{ highlight: state.hoveredElement === name }" @mouseover="state.hoveredElement = name"
+            @mouseout="state.hoveredElement = null" @click="state.focusedElementId = name" />
         </g>
 
-        <!-- 路径 -->
+        <!-- 城坊 -->
+        <g class="areas" v-if="state.areasVisible">
+          <path v-for="(attr, name) in data.building" :key="name" :id="attr.id" :d="attr.d" :stroke="attr.stroke"
+            fill="rgba(228,243,246,0.9)" :stroke-width="attr['stroke-width']"
+            :class="{ highlight: state.hoveredElement === name }" @mouseover="state.hoveredElement = name"
+            @mouseout="state.hoveredElement = null" @click="state.focusedElementId = name" />
+        </g>
+
+        <!-- 道路 -->
         <g class="paths" v-if="state.pathsVisible">
-          <template v-for="(points, name) in data.pathData" :key="name">
-            <polyline
-              :id="name"
-              :points="formatPoints(points)"
-              stroke="rgba(107,203,215,1)"
-              fill="none"
-              :stroke-width="name === '中关村北大街' ? 10 : 5"
-              :class="{ highlight: state.hoveredElement === name }"
-              @mouseover="state.hoveredElement = name"
-              @mouseout="state.hoveredElement = null"
-              @click="state.focusedElementId = name"
-            />
-            <!-- 内部描边 -->
-            <path
-              :id="`${name}-inner`"
-              :d="formatPathD(points)"
-              stroke="white"
-              fill="none"
-              :stroke-width="name === '中关村北大街' ? 7 : 3"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              :class="{ highlight: state.hoveredElement === name }"
-              @mouseover="state.hoveredElement = name"
-              @mouseout="state.hoveredElement = null"
-              @click="state.focusedElementId = name"
-            />
-          </template>
+            <path v-for="(attr, name) in data.road" :id="attr.id" :d="attr.d" :stroke="attr.stroke" :fill="attr.fill"
+              :stroke-width="attr['stroke-width']" stroke-linecap="round" stroke-linejoin="round"
+              :class="{ highlight: state.hoveredElement === name }" @mouseover="state.hoveredElement = name"
+              @mouseout="state.hoveredElement = null" @click="state.focusedElementId = name" />
         </g>
 
-        <!-- 地点 -->
-        <g class="points" v-if="state.pointsVisible">
-          <circle
-            v-for="(coord, name) in data.pointCoordinates"
-            :key="name"
-            :id="name"
-            :cx="coord[0]"
-            :cy="coord[1]"
-            r="8"
-            fill="rgba(107,203,215,1)"
-            :class="{ highlight: state.hoveredElement === name }"
-            @mouseover="state.hoveredElement = name"
-            @mouseout="state.hoveredElement = null"
-            @click="state.focusedElementId = name"
-          />
+        <!-- 水系 -->
+        <g class="paths" v-if="state.pathsVisible">
+            <path v-for="(attr, name) in data.water" :id="attr.id" :d="attr.d" :stroke="attr.stroke" fill="none"
+              :stroke-width="attr['stroke-width']" stroke-linecap="round" stroke-linejoin="round"
+              :class="{ highlight: state.hoveredElement === name }" @mouseover="state.hoveredElement = name"
+              @mouseout="state.hoveredElement = null" @click="state.focusedElementId = name" />
+        </g>
+
+        <!-- 城门 -->
+        <g class="areas" v-if="state.areasVisible">
+          <path v-for="(attr, name) in data.door" :key="name" :id="attr.id" :d="attr.d" :stroke="attr.stroke"
+            :fill="attr.fill" :stroke-width="attr['stroke-width']"
+            :class="{ highlight: state.hoveredElement === name }" @mouseover="state.hoveredElement = name"
+            @mouseout="state.hoveredElement = null" @click="state.focusedElementId = name" />
         </g>
       </g>
     </svg>
@@ -157,9 +115,9 @@ const data = useStoreData();
 // zoom、pan 相关状态
 const width = ref(window.innerWidth);
 const height = ref(window.innerHeight);
-const scale = ref(0.85768);
-const translateX = ref(23.2523);
-const translateY = ref(-300.932);
+const scale = ref(0.7);
+const translateX = ref(500);
+const translateY = ref(20);
 
 
 
@@ -172,8 +130,9 @@ const map = ref(null);
 const mapSvg = ref(null);
 
 // 工具函数：格式化点数组为 polyline 的 points 属性
-const formatPoints = (points) =>
-  points.map((coord) => coord.join(",")).join(" ");
+const formatPoints = (points) => {
+  return points.map((coord) => coord.join(",")).join(" ");
+}
 
 // 工具函数：格式化点数组为 path 的 d 属性
 const formatPathD = (points) =>
@@ -199,27 +158,27 @@ const _scale = (transform, k) =>
 // 内部辅助函数：用于将视图缩放到指定的边界框
 function zoomToBbox(bbox) {
   const r = 1;
-  if (bbox.width / bbox.height >  containerWidth.value /  containerHeight.value) {
-    const scale =  containerWidth.value / bbox.width * r;
+  if (bbox.width / bbox.height > containerWidth.value / containerHeight.value) {
+    const scale = containerWidth.value / bbox.width * r;
     const dx = left.value;
-    const dy = ( containerHeight.value - bbox.height * scale) / 2;
+    const dy = (containerHeight.value - bbox.height * scale) / 2;
     const offsetX = -bbox.x * scale + dx;
     const offsetY = -bbox.y * scale + dy;
     d3.select(mapSvg.value)
-    .transition()
-    .duration(500)
-    .call(zoom.value.transform, d3.zoomIdentity.translate(offsetX, offsetY).scale(scale));
+      .transition()
+      .duration(500)
+      .call(zoom.value.transform, d3.zoomIdentity.translate(offsetX, offsetY).scale(scale));
     return;
   } else {
-    const scale =  containerHeight.value / bbox.height * r;
-    const dx = ( containerWidth.value - bbox.width * scale) / 2+ left.value;
+    const scale = containerHeight.value / bbox.height * r;
+    const dx = (containerWidth.value - bbox.width * scale) / 2 + left.value;
     const dy = 0;
     const offsetX = -bbox.x * scale + dx;
     const offsetY = -bbox.y * scale + dy;
     d3.select(mapSvg.value)
-    .transition()
-    .duration(500)
-    .call(zoom.value.transform, d3.zoomIdentity.translate(offsetX, offsetY).scale(scale));
+      .transition()
+      .duration(500)
+      .call(zoom.value.transform, d3.zoomIdentity.translate(offsetX, offsetY).scale(scale));
   }
 }
 
@@ -311,7 +270,7 @@ const addStateDSL = (dsl, gElement) => {
     if (innerElement) {
       const points = innerElement.getAttribute("d");
       g.append("path")
-      .attr("class","highlighter")
+        .attr("class", "highlighter")
         .attr("d", points)
         .attr("stroke", "rgba(232,159,91,1)")
         .attr("fill", "none")
@@ -385,7 +344,7 @@ const addGeographyDSL = (dsl, gElement) => {
   const randomId = Math.random().toString(36).substring(7);
   // 画直线
   g.append("path")
-    .attr("class","arrow")
+    .attr("class", "arrow")
     .attr("d", `M ${cx1} ${cy1} L ${cx2} ${cy2}`)
     .attr("stroke", "purple")
     .attr("stroke-width", 3)
@@ -569,8 +528,7 @@ const addImageDSL = (dsl, gElement) => {
     .attr("class", "box")
     .attr(
       "d",
-      `M ${x - 20} ${y - 20} L ${rightX + padding} ${y} L ${rightX + padding} ${
-        bottomY + padding
+      `M ${x - 20} ${y - 20} L ${rightX + padding} ${y} L ${rightX + padding} ${bottomY + padding
       } L ${x} ${bottomY + padding} Z`
     )
     .attr("fill", "rgba(255, 255, 255, 0.6)");
@@ -668,8 +626,7 @@ const addVegaLiteDSL = (dsl, gElement) => {
         .attr("class", "box")
         .attr(
           "d",
-          `M ${cx - 20} ${cy + 10} L ${rightX} ${
-            cy + 10 + offsetChart - offsetIcon
+          `M ${cx - 20} ${cy + 10} L ${rightX} ${cy + 10 + offsetChart - offsetIcon
           } L ${rightX} ${bottomY} L ${cx - padding} ${bottomY} Z`
         )
         .attr("fill", "rgba(255, 255, 255, 0.6)");
@@ -716,65 +673,65 @@ const addVegaLiteDSL = (dsl, gElement) => {
 
 // 绘图相关函数END
 // 每次data.annotationList进行变化时，对新加入的dsl调用addDSL
-watch(
-  () => data.annotationList.length,
-  (newLength) => {
-    const annotations = data.annotationList.slice(-newLength);
-    const svgContainer = d3.select(map.value);
-    annotations.forEach((annotation) => {
-      const g = svgContainer.append("g");
-      g.attr("id", 'annotation-' + annotation.id);
-      g.on("mouseover", () => {
-        state.hoveredAnnotationId = annotation.id;
-      });
-      g.on("mouseout", () => {
-        state.hoveredAnnotationId = null;
-      });
-      g.on("click", () => {
-        state.focusedElementId = 'annotation-' + annotation.id;
-      });
-      g.classed("annotation-group", true);
-      g.classed(annotation.modality, true);
-      addDSL(g.node(), annotation.dsls);
-      annotation.group = g.node();
-    });
-  }
-);
+// watch(
+//   () => data.annotationList.length,
+//   (newLength) => {
+//     const annotations = data.annotationList.slice(-newLength);
+//     const svgContainer = d3.select(map.value);
+//     annotations.forEach((annotation) => {
+//       const g = svgContainer.append("g");
+//       g.attr("id", 'annotation-' + annotation.id);
+//       g.on("mouseover", () => {
+//         state.hoveredAnnotationId = annotation.id;
+//       });
+//       g.on("mouseout", () => {
+//         state.hoveredAnnotationId = null;
+//       });
+//       g.on("click", () => {
+//         state.focusedElementId = 'annotation-' + annotation.id;
+//       });
+//       g.classed("annotation-group", true);
+//       g.classed(annotation.modality, true);
+//       addDSL(g.node(), annotation.dsls);
+//       annotation.group = g.node();
+//     });
+//   }
+// );
 
-watch(()=>state.hoveredAnnotationId, (newId, oldId) => {
-  if (oldId!==null) {
-    const oldAnno =data.getAnno(oldId);
-    const oldG = d3.select(oldAnno.group);
-    oldG.selectAll(".highlighter").attr("stroke", "rgba(232,159,91,1)");
-    oldG.selectAll(".box").attr("stroke", '');
-  }
-  if (newId!==null) {
-    const newAnno = data.getAnno(newId);
-    const newG = d3.select(newAnno.group);
+// watch(()=>state.hoveredAnnotationId, (newId, oldId) => {
+//   if (oldId!==null) {
+//     const oldAnno =data.getAnno(oldId);
+//     const oldG = d3.select(oldAnno.group);
+//     oldG.selectAll(".highlighter").attr("stroke", "rgba(232,159,91,1)");
+//     oldG.selectAll(".box").attr("stroke", '');
+//   }
+//   if (newId!==null) {
+//     const newAnno = data.getAnno(newId);
+//     const newG = d3.select(newAnno.group);
 
-    newG.selectAll(".highlighter").attr("stroke", "red");
-    newG.selectAll(".box").attr("stroke", "red").attr("stroke-width", 3);
-    
-  }
-});
+//     newG.selectAll(".highlighter").attr("stroke", "red");
+//     newG.selectAll(".box").attr("stroke", "red").attr("stroke-width", 3);
 
-watch(()=>state.focusedElementId,()=>{
-  if(state.focusedElementId!==null) {
-    const focusedElement = d3.select(`#${state.focusedElementId}`);
-    const bbox = focusedElement.node().getBBox();
-    // 为防止缩放太大，对bbox进行限制
-    if(bbox.width<zoomMinWidth){
-      bbox.x = bbox.x - (zoomMinWidth-bbox.width)/2;
-      bbox.width = zoomMinWidth;
-    }
-    if(bbox.height<zoomMinHeight){
-      bbox.y = bbox.y - (zoomMinHeight-bbox.height)/2;
-      bbox.height = zoomMinHeight;
-    }
-    zoomToBbox(bbox);
-    state.focusedElementId = null;
-  }
-})
+//   }
+// });
+
+// watch(()=>state.focusedElementId,()=>{
+//   if(state.focusedElementId!==null) {
+//     const focusedElement = d3.select(`#${state.focusedElementId}`);
+//     const bbox = focusedElement.node().getBBox();
+//     // 为防止缩放太大，对bbox进行限制
+//     if(bbox.width<zoomMinWidth){
+//       bbox.x = bbox.x - (zoomMinWidth-bbox.width)/2;
+//       bbox.width = zoomMinWidth;
+//     }
+//     if(bbox.height<zoomMinHeight){
+//       bbox.y = bbox.y - (zoomMinHeight-bbox.height)/2;
+//       bbox.height = zoomMinHeight;
+//     }
+//     zoomToBbox(bbox);
+//     state.focusedElementId = null;
+//   }
+// })
 
 onMounted(() => {
   const svg = d3.select(mapSvg.value);
@@ -877,7 +834,7 @@ circle.highlight {
   outline: none;
 }
 
-.ctrl-group button + button {
+.ctrl-group button+button {
   border-top: 1px solid #ddd;
 }
 
@@ -941,6 +898,4 @@ circle.highlight {
   width: 7vh;
   height: 7vh;
 }
-
-
 </style>

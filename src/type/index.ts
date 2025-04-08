@@ -51,9 +51,58 @@ export interface VegaLite {
     spec: VisualizationSpec;
   };
 }
+interface Coords {
+  x: number;
+  y: number;
+}
+
+export interface AttrPoint {
+  type: "Point";
+  paras: {
+    id: number;
+    coord: Coords;
+  };
+}
+
+export interface AttrLine {
+  type: "Line";
+  paras: {
+    id: number;
+    coords: Coords[];
+  };
+}
+
+export interface AttrArea {
+  type: "Area";
+  paras: {
+    id: number;
+    // items: string[];
+    // attr: VisualizationSpec;
+  };
+}
+
+export interface LogicSet {
+  type: "Set";
+  paras: {
+    id: number;
+    items: string[];
+    attr: VisualizationSpec;
+  };
+}
+
+export interface LogicSequence {
+  type: "Sequence";
+  paras: {
+    id: number;
+    items: string[];
+    attr: VisualizationSpec;
+  };
+}
 
 export type DSL = State | Geography | Trend | TextBox | Image | VegaLite;
+export type LabelDSL = LogicSet | LogicSequence;
 
+// MapTracer原始
 export interface Annotation {
   id: number;
   input: string;
@@ -66,5 +115,32 @@ export interface Annotation {
   source: string;
   importance: 1 | 2 | 3;
 }
+
+export interface Annotation {
+  id: number;
+  usrId: number;
+  dsls: LabelDSL[];
+  // visible: boolean;
+  // group: SVGGElement;
+  // modality: string | null;
+  // time: string;
+  // location: string;
+  // source: string;
+  // importance: 1 | 2 | 3;
+}
+
+export interface User {
+  id: number;
+  // input: string;
+  // dsls: DSL[];
+  // visible: boolean;
+  // group: SVGGElement;
+  // modality: string | null;
+  // time: string;
+  // location: string;
+  // source: string;
+  // importance: 1 | 2 | 3;
+}
+
 
 
