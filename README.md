@@ -4,6 +4,10 @@ This template should help get you started developing with Vue 3 in Vite. The tem
 
 Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
 
+### 基础说明
+本项目在[CampusMap](https://github.com/cpxhylty/CampusMap)上改写开发，主要目标实现多人众包对地图实体标注的任务。
+
+### Plotter说明
 SvgPlotter绘制数据中的点、线、多边形，每个图形元素的id是数据中的实体名字，标注过程中可以通过id找到对应的实体。现在的版本假设实体与图形元素是一一对应的，而且没有考虑实体的层次关系。
 
 DSLManager负责处理和维护用户的输入，将输入解析为一组DSL语句，生成对应的标注元素。后续为了支持更多的标注功能，可以考虑将DSLManager拆分成多个模块。目前给出了四种DSL语句的例子，之后还可以继续扩充。
