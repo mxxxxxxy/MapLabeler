@@ -30,6 +30,12 @@ export const useStoreData = defineStore('data', ()=>{
     const pathData = ref([]);
     const areaCoordinates = ref([]);
 
+    const water = ref([]);
+    const wall = ref([]);
+    const building = ref([]);
+    const door = ref([]);
+    const road = ref([]);
+    
     const annotationList:Ref<Annotation[]> = ref([]);
     const annotationId2index = computed(() => {
         const map = new Map();

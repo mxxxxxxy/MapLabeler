@@ -1,6 +1,7 @@
 <script setup>
 // import GengmaData_zh from './components/GengmaData_zh.js';
 import PKUData from './components/PKUData.js';
+import TangData from './components/TangData.json';
 import DSLManager from './components/DSLManager.vue';
 import SvgPlotter from './components/SvgPlotter.vue';
 import LayerManager from './components/LayerManager.vue';
@@ -11,6 +12,13 @@ const data = useStoreData();
 data.pointCoordinates = PKUData.pointCoordinates;
 data.pathData = PKUData.pathCoordinates;
 data.areaCoordinates = PKUData.areaCoordinates;
+
+data.water = TangData['水系'];
+data.wall = TangData['城墙'];
+data.building = TangData['城坊'];
+data.door = TangData['城门'];
+data.road = TangData['道路'];
+
 const height = ref(window.innerHeight);
 const width = ref(window.innerWidth);
 
@@ -32,12 +40,12 @@ window.addEventListener('resize', () => {
         :left = "width/4"
         :top = "0"
       />
-      <DSLManager
+      <!-- <DSLManager
         :height = "height*0.85"
         :width = "width/5"
         :right = "width/100"
         :top = "height/10"
-      />
+      /> -->
       <LayerManager
         :height = "height*0.85"
         :width = "width/5"
