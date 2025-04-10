@@ -519,7 +519,7 @@
 <rect id="&#228;&#184;&#156;&#229;&#174;&#171;" x="578" y="310" width="46" height="93" stroke="black" stroke-width="2"/>
 <rect id="&#230;&#142;&#150;&#229;&#186;&#173;&#229;&#174;&#171;" x="401" y="310" width="53" height="93" stroke="black" stroke-width="2"/>
 <path id="Vector_281" d="M519 150V226H641V150H519Z" stroke="black" stroke-width="2"/>
-<rect id="&#231;&#155;&#145;&#228;&#189;&#156;&#229;&#176;&#134;" x="402" y="464" width="46" height="39" stroke="black" stroke-width="2"/>
+<rect id="&#231;&#155;&#145;&#228;&#189;&#156;&#229;&#176;&#134;" x="402" y="465" width="46" height="39" stroke="black" stroke-width="2"/>
 <rect id="Rectangle 58" x="459" y="464" width="46" height="39" stroke="black" stroke-width="2"/>
 <rect id="&#229;&#176;&#154;&#228;&#185;&#166;&#231;&#156;&#129;" x="515" y="465" width="49" height="38" stroke="black" stroke-width="2"/>
 <rect id="Rectangle 60" x="573" y="465" width="46" height="38" stroke="black" stroke-width="2"/>
@@ -583,6 +583,8 @@
 <rect id="&#231;&#142;&#132;&#231;&#166;&#143;&#233;&#151;&#168;" x="598" y="299" width="7" height="17" transform="rotate(-90 598 299)" fill="black"/>
 <rect id="&#229;&#187;&#186;&#231;&#166;&#143;&#233;&#151;&#168;" x="653" y="299" width="7" height="17" transform="rotate(-90 653 299)" fill="black"/>
 <rect id="&#228;&#184;&#185;&#229;&#135;&#164;&#233;&#151;&#168;" x="691" y="299" width="7" height="8" transform="rotate(-90 691 299)" fill="black"/>
+<rect id="&#230;&#156;&#155;&#228;&#187;&#153;&#233;&#151;&#168;" x="723" y="299" width="7" height="8" transform="rotate(-90 723 299)" fill="black"/>
+<rect id="&#229;&#187;&#182;&#230;&#148;&#191;&#233;&#151;&#168;" x="750" y="299" width="7" height="10" transform="rotate(-90 750 299)" fill="black"/>
 <rect id="&#229;&#133;&#180;&#229;&#174;&#137;&#233;&#151;&#168;" x="632.5" y="299" width="7" height="4" transform="rotate(-90 632.5 299)" fill="black"/>
 <rect id="&#232;&#138;&#179;&#230;&#158;&#151;&#233;&#151;&#168;" x="383" y="299" width="7" height="8" transform="rotate(-90 383 299)" fill="black"/>
 <rect id="&#230;&#153;&#175;&#230;&#155;&#156;&#233;&#151;&#168;" x="286" y="299" width="7" height="17" transform="rotate(-90 286 299)" fill="black"/>

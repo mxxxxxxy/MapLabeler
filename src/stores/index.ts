@@ -1,35 +1,38 @@
-import {computed, Ref, ref,shallowRef} from 'vue'
+import {computed, Ref, ref, shallowRef} from 'vue'
 import { defineStore } from 'pinia'
-import { Annotation } from '@/type'
+import { EntityAnnotation, LogicAnnotation } from '@/type'
 
 export const useStoreState =  defineStore('state', ()=>{
     // 控制地图的显示状态
     const baseMapVisible:Ref<boolean> =  ref(true);
-    const areasVisible:Ref<boolean> = ref(true);
-    const pathsVisible:Ref<boolean> = ref(true);
-    const pointsVisible:Ref<boolean> = ref(true);
+
+    const roadVisible:Ref<boolean> = ref(true);
+    const wallVisible:Ref<boolean> = ref(true);
+    const waterVisible:Ref<boolean> = ref(true);
+    const buildingVisible:Ref<boolean> = ref(true);
+    const doorVisible:Ref<boolean> = ref(true);
 
     const hoveredElement:Ref<null|string> = ref(null);
     const focusedElementId:Ref<null|string> = ref(null);
     const hoveredAnnotationId:Ref<null|number> = ref(null);
 
+    const mouseMode:Ref<string> = ref("default") 
 
     return {
         baseMapVisible,
-        areasVisible,
-        pathsVisible,
-        pointsVisible,
         hoveredElement,
         focusedElementId,
         hoveredAnnotationId,
+        roadVisible,
+        wallVisible,
+        waterVisible,
+        buildingVisible,
+        doorVisible,
+        mouseMode
     }
 })
 
 export const useStoreData = defineStore('data', ()=>{
-    const pointCoordinates= ref([]);
-    const pathData = ref([]);
-    const areaCoordinates = ref([]);
-
     const water = ref([]);
     const wall = ref([]);
     const building = ref([]);
@@ -54,11 +57,13 @@ export const useStoreData = defineStore('data', ()=>{
       }
 
     return {
-        pointCoordinates,
-        pathData,
-        areaCoordinates,
         annotationList,
         annotationId2index,
+        water,
+        wall,
+        building,
+        door,
+        road,
         getAnno,
     }
 })

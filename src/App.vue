@@ -7,6 +7,7 @@ import SvgPlotter from './components/SvgPlotter.vue';
 import LayerManager from './components/LayerManager.vue';
 import { useStoreData } from './stores/index.js';
 import { ref } from 'vue';
+import { pathCommandsFromString } from 'd3-interpolate-path';
 
 const data = useStoreData();
 data.pointCoordinates = PKUData.pointCoordinates;
@@ -16,6 +17,15 @@ data.areaCoordinates = PKUData.areaCoordinates;
 data.water = TangData['水系'];
 data.wall = TangData['城墙'];
 data.building = TangData['城坊'];
+// data.building.forEach(d=>{
+//     const points = pathCommandsFromString(d.d);
+//     console.log(points)
+//     // const x = points[0].x + points[1].x / 2
+//     // const y = points[0].y + points[2].y / 2
+//     // const x = points[1].x + 20
+//     // const y = points[2].y - 20
+//     d.pos = [x,y]
+// })
 data.door = TangData['城门'];
 data.road = TangData['道路'];
 
@@ -32,7 +42,7 @@ window.addEventListener('resize', () => {
 <template>
     <div style="width: 100vw; height: 100vh; overflow: hidden;">
       <span class = "title" style="position: absolute; top: 0; left: 0; z-index: 1;">
-        地图标注系统
+        古代地理空间主题地图
       </span>
       <SvgPlotter
         :height = "height"

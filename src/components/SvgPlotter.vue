@@ -26,46 +26,52 @@
       <g id="map-container" ref="map">
         <!-- 底图 -->
         <g v-if="state.baseMapVisible">
-          <image class="base-map" href="/Changan.png" x="0" y="0" width="1039" height="1239" />
-        </g>
-
-        <!-- 城门 -->
-        <g class="areas" v-if="state.areasVisible">
-          <path v-for="(attr, name) in data.wall" :key="name" :id="name" :d="attr.d" :stroke="attr.stroke"
-            fill="rgba(228,243,246,0.9)" :stroke-width="attr['stroke-width']"
-            :class="{ highlight: state.hoveredElement === name }" @mouseover="state.hoveredElement = name"
-            @mouseout="state.hoveredElement = null" @click="state.focusedElementId = name" />
+          <image class="base-map" href="/Changan.png" x="0" y="0" width="1039" height="1239" opacity="0.2"/>
         </g>
 
         <!-- 城坊 -->
-        <g class="areas" v-if="state.areasVisible">
+        <g class="areas" v-if="state.buildingVisible">
           <path v-for="(attr, name) in data.building" :key="name" :id="attr.id" :d="attr.d" :stroke="attr.stroke"
             fill="rgba(228,243,246,0.9)" :stroke-width="attr['stroke-width']"
-            :class="{ highlight: state.hoveredElement === name }" @mouseover="state.hoveredElement = name"
+            :class="{ highlight: state.hoveredElement === attr.id }" @mouseover="state.hoveredElement = attr.id"
             @mouseout="state.hoveredElement = null" @click="state.focusedElementId = name" />
+
+          <!-- <text v-for="(attr, name) in data.building" :id="`text${attr.id}`" :key="name" :stroke="attr.stroke"
+            :x="attr.pos[0]" :y="attr.pos[1]"
+            fill="black" :stroke-width="0">
+              {{ attr.id }}
+          </text> -->
         </g>
 
         <!-- 道路 -->
-        <g class="paths" v-if="state.pathsVisible">
+        <g class="paths" v-if="state.roadVisible">
             <path v-for="(attr, name) in data.road" :id="attr.id" :d="attr.d" :stroke="attr.stroke" :fill="attr.fill"
               :stroke-width="attr['stroke-width']" stroke-linecap="round" stroke-linejoin="round"
-              :class="{ highlight: state.hoveredElement === name }" @mouseover="state.hoveredElement = name"
+              :class="{ highlight: state.hoveredElement === attr.id }" @mouseover="state.hoveredElement = attr.id"
               @mouseout="state.hoveredElement = null" @click="state.focusedElementId = name" />
         </g>
 
         <!-- 水系 -->
-        <g class="paths" v-if="state.pathsVisible">
+        <g class="paths" v-if="state.waterVisible">
             <path v-for="(attr, name) in data.water" :id="attr.id" :d="attr.d" :stroke="attr.stroke" fill="none"
               :stroke-width="attr['stroke-width']" stroke-linecap="round" stroke-linejoin="round"
-              :class="{ highlight: state.hoveredElement === name }" @mouseover="state.hoveredElement = name"
+              :class="{ highlight: state.hoveredElement === attr.id }" @mouseover="state.hoveredElement = attr.id"
               @mouseout="state.hoveredElement = null" @click="state.focusedElementId = name" />
+        </g>
+        
+        <!-- 城墙 -->
+        <g class="areas" v-if="state.wallVisible">
+          <path v-for="(attr, name) in data.wall" :key="name" :id="name" :d="attr.d" :stroke="attr.stroke"
+            fill="none" :stroke-width="attr['stroke-width']"
+            :class="{ highlight: state.hoveredElement === attr.id }" @mouseover="state.hoveredElement = attr.id"
+            @mouseout="state.hoveredElement = null" @click="state.focusedElementId = name" />
         </g>
 
         <!-- 城门 -->
-        <g class="areas" v-if="state.areasVisible">
+        <g class="areas" v-if="state.doorVisible">
           <path v-for="(attr, name) in data.door" :key="name" :id="attr.id" :d="attr.d" :stroke="attr.stroke"
             :fill="attr.fill" :stroke-width="attr['stroke-width']"
-            :class="{ highlight: state.hoveredElement === name }" @mouseover="state.hoveredElement = name"
+            :class="{ highlight: state.hoveredElement === attr.id }" @mouseover="state.hoveredElement = attr.id"
             @mouseout="state.hoveredElement = null" @click="state.focusedElementId = name" />
         </g>
       </g>
@@ -118,8 +124,6 @@ const height = ref(window.innerHeight);
 const scale = ref(0.7);
 const translateX = ref(500);
 const translateY = ref(20);
-
-
 
 // 保存 d3.zoom 实例
 // let zoom = d3.zoom();
@@ -718,6 +722,7 @@ const addVegaLiteDSL = (dsl, gElement) => {
 // watch(()=>state.focusedElementId,()=>{
 //   if(state.focusedElementId!==null) {
 //     const focusedElement = d3.select(`#${state.focusedElementId}`);
+//     console.log(focusedElement)
 //     const bbox = focusedElement.node().getBBox();
 //     // 为防止缩放太大，对bbox进行限制
 //     if(bbox.width<zoomMinWidth){
@@ -732,6 +737,10 @@ const addVegaLiteDSL = (dsl, gElement) => {
 //     state.focusedElementId = null;
 //   }
 // })
+
+watch(()=>state.focusedElement, ()=>{
+    console.log(state.focusedElement)
+})
 
 onMounted(() => {
   const svg = d3.select(mapSvg.value);
@@ -793,10 +802,10 @@ onUnmounted(() => {
 }
 
 /* 高亮样式 */
-polygon.highlight,
-polyline.highlight {
+path.highlight,
+path.highlight {
   stroke: red !important;
-  stroke-width: 5 !important;
+  stroke-width: 3 !important;
 }
 
 circle.highlight {

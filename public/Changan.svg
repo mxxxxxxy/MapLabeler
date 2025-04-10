@@ -519,7 +519,7 @@
 <rect id="东宫" x="578" y="310" width="46" height="93" stroke="black" stroke-width="2"/>
 <rect id="掖庭宫" x="401" y="310" width="53" height="93" stroke="black" stroke-width="2"/>
 <path id="Vector_281" d="M519 150V226H641V150H519Z" stroke="black" stroke-width="2"/>
-<rect id="监作将" x="402" y="464" width="46" height="39" stroke="black" stroke-width="2"/>
+<rect id="监作将" x="402" y="465" width="46" height="39" stroke="black" stroke-width="2"/>
 <rect id="Rectangle 58" x="459" y="464" width="46" height="39" stroke="black" stroke-width="2"/>
 <rect id="尚书省" x="515" y="465" width="49" height="38" stroke="black" stroke-width="2"/>
 <rect id="Rectangle 60" x="573" y="465" width="46" height="38" stroke="black" stroke-width="2"/>
@@ -583,6 +583,8 @@
 <rect id="玄福门" x="598" y="299" width="7" height="17" transform="rotate(-90 598 299)" fill="black"/>
 <rect id="建福门" x="653" y="299" width="7" height="17" transform="rotate(-90 653 299)" fill="black"/>
 <rect id="丹凤门" x="691" y="299" width="7" height="8" transform="rotate(-90 691 299)" fill="black"/>
+<rect id="望仙门" x="723" y="299" width="7" height="8" transform="rotate(-90 723 299)" fill="black"/>
+<rect id="延政门" x="750" y="299" width="7" height="10" transform="rotate(-90 750 299)" fill="black"/>
 <rect id="兴安门" x="632.5" y="299" width="7" height="4" transform="rotate(-90 632.5 299)" fill="black"/>
 <rect id="芳林门" x="383" y="299" width="7" height="8" transform="rotate(-90 383 299)" fill="black"/>
 <rect id="景曜门" x="286" y="299" width="7" height="17" transform="rotate(-90 286 299)" fill="black"/>

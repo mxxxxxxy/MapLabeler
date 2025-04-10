@@ -741,7 +741,7 @@
             "id": "监作将",
             "stroke": "black",
             "stroke-width": "2",
-            "d": "M 402,464 L 448,464 L 448,503 L 402,503 Z",
+            "d": "M 402,465 L 448,465 L 448,504 L 402,504 Z",
             "tag": "path"
         },
         {
@@ -1119,6 +1119,20 @@
             "transform": "rotate(-90 691 299)",
             "fill": "black",
             "d": "M 691,299 L 691,292 L 699,292 L 699,299 Z",
+            "tag": "path"
+        },
+        {
+            "id": "望仙门",
+            "transform": "rotate(-90 723 299)",
+            "fill": "black",
+            "d": "M 723,299 L 723,292 L 731,292 L 731,299 Z",
+            "tag": "path"
+        },
+        {
+            "id": "延政门",
+            "transform": "rotate(-90 750 299)",
+            "fill": "black",
+            "d": "M 750,299 L 750,292 L 760,292 L 760,299 Z",
             "tag": "path"
         },
         {

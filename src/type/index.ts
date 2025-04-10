@@ -101,11 +101,12 @@ export interface LogicSequence {
 
 export type DSL = State | Geography | Trend | TextBox | Image | VegaLite;
 export type LabelDSL = LogicSet | LogicSequence;
+export type mouseMode = "default" | "logic" | "entity";
 
 // MapTracer原始
-export interface Annotation {
+export interface EntityAnnotation {
   id: number;
-  input: string;
+  usrId: number;
   dsls: DSL[];
   visible: boolean;
   group: SVGGElement;
@@ -116,7 +117,7 @@ export interface Annotation {
   importance: 1 | 2 | 3;
 }
 
-export interface Annotation {
+export interface LogicAnnotation {
   id: number;
   usrId: number;
   dsls: LabelDSL[];
