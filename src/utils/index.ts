@@ -49,3 +49,26 @@ export const projectCoordinates = (lon:number, lat:number):[number,number] => {
     (39.99290359080193 - 39.98659063142852);
   return [x, y];
 };
+
+export const exportSVG = (svg: SVGElement) => {
+    console.log(svg)
+    // 获取SVG数据
+    const svgData = new XMLSerializer().serializeToString(svg);
+    
+    // 创建Blob对象
+    const canvasBlob = new Blob([svgData], { type: 'image/svg+xml' });
+    
+    // 创建下载链接
+    const downloadUrl = URL.createObjectURL(canvasBlob);
+    
+    // 创建并触发点击事件
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = 'exported-svg.svg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // 清理对象URL
+    URL.revokeObjectURL(downloadUrl);
+}

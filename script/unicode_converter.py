@@ -4,13 +4,15 @@ import html
 def html_entities_to_chinese(input_string):
     # 使用正则表达式找到所有&#NNN;形式的实体
     entities = re.findall(r'&#(\d+);', input_string)
-    
+    rest = re.sub(r'&#\d+;', '', input_string)
+    potentialIdx1, potentialIdx2 = rest.split('-')[0], rest.split('_')[0]
     # 将每个十进制数字转换为对应的字节
     byte_array = bytearray(int(entity) for entity in entities)
     
     # 使用UTF-8解码字节数组，得到中文字符
     chinese_text = byte_array.decode('utf-8')
-    
+    if potentialIdx1 == potentialIdx2 and potentialIdx1 and potentialIdx2:
+        chinese_text += potentialIdx1
     return chinese_text
 
 def extract_and_decode_ids(svg_file_path):
