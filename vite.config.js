@@ -22,7 +22,7 @@ export default defineConfig({
       ],
     },
   base: './',
-  server: {
-    hmr: true
-  },
+  // server: {
+  //   hmr: true
+  // },
 })
