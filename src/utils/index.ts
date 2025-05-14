@@ -51,7 +51,7 @@ export const projectCoordinates = (lon:number, lat:number):[number,number] => {
 };
 
 export const exportSVG = (svg: SVGElement) => {
-    console.log(svg)
+    // console.log(svg)
     // 获取SVG数据
     const svgData = new XMLSerializer().serializeToString(svg);
     
@@ -71,4 +71,19 @@ export const exportSVG = (svg: SVGElement) => {
     
     // 清理对象URL
     URL.revokeObjectURL(downloadUrl);
+}
+
+
+export const exportJson =  (data, filename = 'data.json') => {
+  const jsonStr = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonStr], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  // a.remove(); // 用完移除a标签
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }

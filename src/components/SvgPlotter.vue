@@ -24,10 +24,11 @@
         <svg ref="mapSvg" class="map-svg">
             <!-- 缩放&平移容器 -->
             <g id="map-container" ref="map" @mousemove="overBaseMap" @click="clickBaseMap"
-                :class="{'circular-curcor': state.addingLayerEntity}">
+                :class="{ 'circular-curcor': state.addingLayerEntity }">
                 <!-- 底图 -->
                 <g v-if="state.layerVisibility.baseMap">
-                    <image class="base-map" href="/Changan.png" x="0" y="0" width="1039" height="1236" :opacity="state.mapOpacity" />
+                    <image class="base-map" href="/Changan.png" x="0" y="0" width="1039" height="1236"
+                        :opacity="state.mapOpacity" />
                 </g>
 
                 <!-- 城坊 -->
@@ -112,7 +113,7 @@
                 </g>
 
                 <!-- 其他 -->
-                <g v-for="key in userAddKeys">
+                <g v-for="key in data.userAddKeys">
                     <g class="areas" v-if="state.layerVisibility[key]">
                         <g v-for="(attr, idx) in data.layers[key]" ref="doorGroups" v-show="!attr.visible">
                             <circle :key="idx" :cx="attr.pos[0]" :cy="attr.pos[1]" r="7" :id="attr.id" :belong="key"
@@ -137,9 +138,8 @@
 import { ref, reactive, computed, onMounted, onUnmounted, watch, nextTick, useTemplateRef, provide } from "vue";
 import * as d3 from "d3";
 import { useStoreState, useStoreData } from "@/stores";
-import { projectCoordinates, extract_coordinate, exportSVG } from "@/utils";
-import vegaEmbed from "vega-embed";
-import { inject } from 'vue'
+import { projectCoordinates, extract_coordinate, exportSVG, exportJson } from "@/utils";
+import { inject, toRaw } from 'vue'
 const emitter = inject('emitter')
 
 const props = defineProps({
@@ -173,9 +173,6 @@ const zoomMinHeight = 100;
 // 响应式状态和数据
 const state = useStoreState();
 const data = useStoreData();
-const userAddKeys = computed(()=>{
-    return Object.keys(data.layers).filter((key) => !['door', 'water', 'building', 'road', 'wall'].includes(key))
-})
 // zoom、pan 相关状态
 const width = ref(window.innerWidth);
 const height = ref(window.innerHeight);
@@ -191,9 +188,9 @@ const zoom = ref(d3.zoom());
 const map = ref(null);
 const mapSvg = ref(null);
 
-emitter.on('downloadSvg', () => {
-    exportSVG(mapSvg.value)
-})
+// emitter.on('downloadSvg', () => {
+//     exportSVG(mapSvg.value);
+// })
 
 function clickEvent(e, d) {
     if (state.addingLayerEntity) {
@@ -317,27 +314,6 @@ onMounted(() => {
         );
 
     window.addEventListener("resize", onResize);
-    // nextTick(() => {
-    //     doorGroups.value.forEach(door => {
-    //         const doorelement = door.querySelector('path');
-    //         const doorId = door.getAttribute('id');
-    //         const found = data.layers.door.find((d,idx) => (d.id + '-' + idx) == doorId);
-    //         const bbox = doorelement.getBBox();
-    //         found.pos = [0, 0]
-    //         found.pos[0] = bbox.x;
-    //         found.pos[1] = bbox.y;
-    //     })
-    //     buildingGroups.value.forEach(building => {
-    //         const buildingelement = building.querySelector('path');
-    //         const buildingId = building.getAttribute('id');
-    //         const found = data.layers.building.find((d,idx) => (d.id + '-' + idx) == buildingId);
-    //         const bbox = buildingelement.getBBox();
-    //         found.pos = [0, 0]
-    //         found.pos[0] = bbox.x + bbox.width / 2 - 15;
-    //         found.pos[1] = bbox.y + bbox.height / 2 + 5;
-    //     })
-    //     load_text.value = true;
-    // })
 });
 
 
@@ -396,7 +372,7 @@ circle.highlight {
     cursor: pointer;
 }
 
-.circular-curcor{
+.circular-curcor {
     cursor: url('@/assets/mouse.png') 10 10, pointer;
 }
 

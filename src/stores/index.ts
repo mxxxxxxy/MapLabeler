@@ -7,6 +7,10 @@ export const useStoreState = defineStore('state', () => {
     const baseMapVisible: Ref<boolean> = ref(true);
     const mapOpacity: Ref<number> = ref(0.2);
 
+    const isExport: Ref<boolean> = ref(false);
+    const isUpload: Ref<boolean> = ref(false);
+    const uploadedData = ref(null)
+
     const layerVisibility: Ref<Object> = ref({});
     const addLayerVisibility = (layerName: string | string[]) => {
         if(typeof layerName === 'string'){
@@ -52,6 +56,10 @@ export const useStoreState = defineStore('state', () => {
         focusedElementId,
         hoveredAnnotationId,
 
+        isUpload,
+        isExport,
+        uploadedData,
+
         mode,
         editing,
         selecting,
@@ -81,29 +89,30 @@ export const useStoreData = defineStore('data', () => {
         layers.value[layerName] = []
     }
 
-    const annotationList = ref([]);
-    const annotationId2index = computed(() => {
-        const map = new Map();
-        annotationList.value.forEach((annotation, index) => {
-            map.set(annotation.id, index);
-        });
-        return map;
-    });
-
-    const getAnno = (id: number) => {
-        const index = annotationId2index.value.get(id);
-        if (index !== undefined) {
-            return annotationList.value[index];
+    const getLayers = () => {
+        let _ = [
+            { name: "baseMap", label: "底图", visible: true },
+            { name: "wall", label: "城墙", visible: true, children: layers.value.wall },
+            { name: "water", label: "水系", visible: true, children: layers.value.water },
+            { name: "building", label: "城坊", visible: true, children: layers.value.building },
+            { name: "road", label: "街道", visible: true, children: layers.value.road },
+            { name: "door", label: "城门", visible: true, children: layers.value.door },
+        ]
+        for(let k of userAddKeys.value){
+            _.push({ name: k, label: k, visible: true, children: layers.value[k], userAdded: true });
         }
-        return null;
+        return ref(_)
     }
 
+    const userAddKeys = computed(() => {
+        return Object.keys(layers.value).filter((key) => !['door', 'water', 'building', 'road', 'wall'].includes(key))
+    })
+
     return {
-        annotationList,
-        annotationId2index,
         layers,
+        userAddKeys,
         addLayer,
-        getAnno,
+        getLayers,
     }
 })
 

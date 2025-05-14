@@ -238,14 +238,7 @@ const emitter = inject('emitter')
 const state = useStoreState();
 const data = useStoreData();
 
-const layers = ref([
-    { name: "baseMap", label: "底图", visible: true },
-    { name: "wall", label: "城墙", visible: true, children: data.layers.wall },
-    { name: "water", label: "水系", visible: true, children: data.layers.water },
-    { name: "building", label: "城坊", visible: true, children: data.layers.building },
-    { name: "road", label: "街道", visible: true, children: data.layers.road },
-    { name: "door", label: "城门", visible: true, children: data.layers.door },
-])
+const layers = data.getLayers();
 const expandLayer = ref("")
 
 // 添加实体图层代码
@@ -310,7 +303,9 @@ const deleteLayer = (event, layer) => {
 
 }
 
-watch(() => state.clickMapBool, (newValue) => {
+watch(
+    () => state.clickMapBool, 
+    (newValue) => {
     if (newValue) {
         const newId = `${state.addingLayer.name}_${new Date().getTime().toString(36)}`
         state.addingLayer.children.push({
@@ -364,6 +359,7 @@ const itemList = keys.map(key => {
     ]
 })
 const editDataDict = ref(Object.fromEntries(itemList));
+
 const addNewDataDictItem = (key) => { // 添加新的图层实体后需要再dataDict中添加对应的id->实体映射
     editDataDict.value[key] = defaultEditableValues("")
 }
@@ -522,7 +518,6 @@ const addLogic = (logic, logicMode) => {
                 visible: true
             })
             state.logicRelatedIds.add(state.hoveredElementId);
-            console.log(state.logicRelatedIds)
         }
     }
     emitter.emit("showInfo", `<span>正在添加${logicMode === 'set' ? "集合" : "序列"}<br>单击添加地图实体<br>回车完成添加<span>`)
@@ -546,7 +541,6 @@ const deleteLogicLayer = (layer) => {
     logics.value.splice(delete_index, 1);
 }
 
-watch(() => state.logicRelatedIds, (v) => { console.log(v) })
 
 onMounted(() => {
     window.addEventListener('keydown', (event) => {
@@ -599,6 +593,9 @@ watch(
         }
     }
 );
+
+
+defineExpose({ layers, logics,  editDataDict })
 </script>
 
 <style scoped>
@@ -679,6 +676,7 @@ watch(
     display: flex;
     align-items: center;
     height: 28px;
+    border-radius: 6px;
 }
 
 .layer {
@@ -702,7 +700,7 @@ watch(
     display: flex;
     height: 28px;
     align-items: center;
-    /* margin: 1px 0px; */
+    border-radius: 6px;
     padding: 0px 3px;
     cursor: pointer;
 }
