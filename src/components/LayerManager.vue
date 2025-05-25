@@ -50,7 +50,8 @@
                 <div v-show="layer.children && expandLayer == layer.name" :style="{ 'padding-left': Indent + 'px' }">
                     <div v-for="(d, idx) in layer.children" :key="d.id" :id="`layer-${d.id}`"
                         @mouseenter="state.hoveredSVGElement($event, d.id)"
-                        @mouseleave="state.hoveredSVGElement($event, null)" @click="state.focusedElementId = d.id"
+                        @mouseleave="state.hoveredSVGElement($event, null)" 
+                        @click="state.focusedElementId = d.id"
                         class="eleBorder"
                         :style="{ 'border-color': state.hoveredElementId == d.id ? '#5B5B5B' : 'transparent' }">
                         <div class="eleContainer">
@@ -328,13 +329,10 @@ watch(
 
 
 // 获取所有地图实体的id，构建一个id->实体标注的obj
-const keys = [
-    ...Object.values(data.layers.wall).map(d => d.id),
-    ...Object.values(data.layers.water).map(d => d.id),
-    ...Object.values(data.layers.building).map(d => d.id),
-    ...Object.values(data.layers.road).map(d => d.id),
-    ...Object.values(data.layers.door).map(d => d.id),
-]
+let keys = []
+for(let value of Object.values(data.layers)){
+    keys = keys.concat(value.map(d => d.id));
+}
 function defaultEditableValues() {
     return [
         {

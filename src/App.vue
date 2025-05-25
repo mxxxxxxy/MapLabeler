@@ -6,7 +6,6 @@
     <SvgPlotter :height="height" :width="width / 2" :left="width / 4" :top="0" />
     <div class="toolbar">
       <toolBar> </toolBar>
-      <!-- <InputFile></InputFile> -->
     </div>
     <LayerManager :height="height * 0.85" :width="width / 5" :left="width / 100" :top="height / 10"
       ref="layerManager" />
@@ -16,6 +15,7 @@
 
 <script setup>
 import TangData from '@/assets/TangData.json';
+import QuanTangData from '@/assets/QuanTangData.json';
 import SvgPlotter from './components/SvgPlotter.vue';
 import LayerManager from './components/LayerManager.vue';
 import { exportJson } from "@/utils";
@@ -36,28 +36,22 @@ const assignLabelById = (arr) => {
     d.label = d.id
   })
 }
-data.layers.water = TangData['水系'];
-data.layers.wall = TangData['城墙'];
-data.layers.building = TangData['城坊'];
-data.layers.door = TangData['城门'];
-data.layers.road = TangData['道路'];
-state.addLayerVisibility(['baseMap', 'water', 'wall', 'building', 'door', 'road']);
-assignLabelById(data.layers.water);
-assignLabelById(data.layers.wall);
-assignLabelById(data.layers.building);
-assignLabelById(data.layers.door);
-assignLabelById(data.layers.road);
+for(let key of Object.keys(QuanTangData)){
+  data.addPredefinedLayer(key, QuanTangData[key]);
+  state.addLayerVisibility(key)
+  console.log(data.layers)
+  assignLabelById(data.layers[key]);
+}
+state.addLayerVisibility('baseMap');
+console.log(data.layers)
+
 
 const init = () => {
   if (state.isUpload) {
     Object.keys(data.uploadedData.layer).forEach(key => {
       data.layers[key] = data.uploadedData.layer[key];
+      assignLabelById(data.layers[key]);
     });
-    assignLabelById(data.layers.water);
-    assignLabelById(data.layers.wall);
-    assignLabelById(data.layers.building);
-    assignLabelById(data.layers.door);
-    assignLabelById(data.layers.road);
     state.addLayerVisibility(data.userAddKeys);
     layerManagerComponent.value.layers = data.getLayers().value;
     layerManagerComponent.value.editDataDict = data.uploadedData.editDataDict;

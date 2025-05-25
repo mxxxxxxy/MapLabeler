@@ -25,7 +25,9 @@ def extract_and_decode_ids(svg_file_path):
     ids = id_pattern.findall(svg_content)
     id_mapping = {}
     for id_str in ids:
-        if not id_str.startswith("&"):
+        # if not id_str.startswith("&"):
+        #     continue
+        if '&' not in id_str:
             continue
         decoded_id = html_entities_to_chinese(id_str)
         id_mapping[id_str] = decoded_id
@@ -43,8 +45,8 @@ def extract_and_decode_ids(svg_file_path):
     return updated_svg_content
 
 if __name__ == "__main__":
-    svg_path = '../public/FigmaChangan.svg' # 中文id未被正确解码
-    output_svg_path = '../public/Changan.svg' # 中文id正确解码后的svg
+    svg_path = '../public/唐疆域669.svg' # 中文id未被正确解码
+    output_svg_path = '../public/tang.svg' # 中文id正确解码后的svg
     updated_svg_content = extract_and_decode_ids(svg_path)
     with open(output_svg_path, 'w', encoding='utf-8') as file:
         file.write(updated_svg_content)

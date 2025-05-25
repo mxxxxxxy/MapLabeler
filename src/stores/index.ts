@@ -78,26 +78,25 @@ export const useStoreState = defineStore('state', () => {
 })
 
 export const useStoreData = defineStore('data', () => {
-    const layers = ref({
-        water : [],
-        wall : [],     
-        building : [],
-        door : [],       
-        road : []
-    })
+    const predefinedLayers = [];
+    const layers = ref({})
+
+    // 初始化的时候使用，记录哪些layers是预先设定的
+    const addPredefinedLayer = (layer: string, layerData: any) => {
+        predefinedLayers.push(layer)
+        layers.value[layer] = layerData
+    }
+
+    // 用户添加新的layer时候使用
     const addLayer = (layerName: string) => {
         layers.value[layerName] = []
     }
 
     const getLayers = () => {
-        let _ = [
-            { name: "baseMap", label: "底图", visible: true },
-            { name: "wall", label: "城墙", visible: true, children: layers.value.wall },
-            { name: "water", label: "水系", visible: true, children: layers.value.water },
-            { name: "building", label: "城坊", visible: true, children: layers.value.building },
-            { name: "road", label: "街道", visible: true, children: layers.value.road },
-            { name: "door", label: "城门", visible: true, children: layers.value.door },
-        ]
+        let _ = [{ name: "baseMap", label: "底图", visible: true }]
+        _ = _.concat(predefinedLayers.map(layerName => {
+            return { name: layerName, label: layerName, visible: true, children: layers.value[layerName] }
+        }))
         for(let k of userAddKeys.value){
             _.push({ name: k, label: k, visible: true, children: layers.value[k], userAdded: true });
         }
@@ -105,13 +104,14 @@ export const useStoreData = defineStore('data', () => {
     }
 
     const userAddKeys = computed(() => {
-        return Object.keys(layers.value).filter((key) => !['door', 'water', 'building', 'road', 'wall'].includes(key))
+        return Object.keys(layers.value).filter((key) => !predefinedLayers.includes(key))
     })
 
     return {
         layers,
         userAddKeys,
         addLayer,
+        addPredefinedLayer,
         getLayers,
     }
 })
