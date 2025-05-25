@@ -14,36 +14,46 @@
 </template>
 
 <script setup>
-import TangData from '@/assets/TangData.json';
+import Changan from '@/assets/TangData.json';
 import QuanTangData from '@/assets/QuanTangData.json';
 import SvgPlotter from './components/SvgPlotter.vue';
 import LayerManager from './components/LayerManager.vue';
 import { exportJson } from "@/utils";
 import Info from './components/Info.vue';
 import { useStoreData, useStoreState } from './stores/index.js';
+import { getImageSize } from './utils/index'
 import { nextTick, ref, watch, useTemplateRef, toRaw, inject } from 'vue';
 import toolBar from './components/toolBar.vue';
 // ------
 const emitter = inject('emitter');
 
 const layerManagerComponent = useTemplateRef('layerManager');
-
 const data = useStoreData();
 const state = useStoreState();
+
+const selectedData = QuanTangData
+if (selectedData == Changan) {
+  data.baseMapSource = '/Changan.png';
+  state.mapOpacity = 0.2;
+} else {
+  data.baseMapSource = '/QuanTang.png';
+  state.mapOpacity = 0.7;
+}
+getImageSize(data.baseMapSource).then(baseMapSize => {
+  state.baseMapSize = baseMapSize
+})
 // TangData
 const assignLabelById = (arr) => {
   arr.forEach((d) => {
     d.label = d.id
   })
 }
-for(let key of Object.keys(QuanTangData)){
-  data.addPredefinedLayer(key, QuanTangData[key]);
+for (let key of Object.keys(selectedData)) {
+  data.addPredefinedLayer(key, selectedData[key]);
   state.addLayerVisibility(key)
-  console.log(data.layers)
   assignLabelById(data.layers[key]);
 }
 state.addLayerVisibility('baseMap');
-console.log(data.layers)
 
 
 const init = () => {

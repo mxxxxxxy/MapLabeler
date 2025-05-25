@@ -87,3 +87,20 @@ export const exportJson =  (data, filename = 'data.json') => {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 }
+
+
+export function getImageSize(url: string) {
+  return new Promise(function (resolve, reject) {
+      let image = new Image();
+      image.onload = function () {
+          resolve({
+              width: image.width,
+              height: image.height
+          });
+      };
+      image.onerror = function () {
+          reject(new Error('error'));
+      };
+      image.src = url;
+  });
+}

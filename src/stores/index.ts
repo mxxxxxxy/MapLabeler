@@ -5,8 +5,9 @@ import { EntityAnnotation, LayerEntity, LogicAnnotation } from '@/type'
 export const useStoreState = defineStore('state', () => {
     // 控制地图的显示状态
     const baseMapVisible: Ref<boolean> = ref(true);
-    const mapOpacity: Ref<number> = ref(0.2);
+    const baseMapSize: Ref<Object> = ref({});
 
+    const mapOpacity: Ref<number> = ref(0.2);
     const isExport: Ref<boolean> = ref(false);
     const isUpload: Ref<boolean> = ref(false);
     const uploadedData = ref(null)
@@ -49,6 +50,7 @@ export const useStoreState = defineStore('state', () => {
 
     return {
         baseMapVisible,
+        baseMapSize,
         mapOpacity,
         hoveredElementId,
         hoveredGroup,

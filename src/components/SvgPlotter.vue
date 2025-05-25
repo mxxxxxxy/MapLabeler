@@ -27,8 +27,11 @@
                 :class="{ 'circular-curcor': state.addingLayerEntity }">
                 <!-- 底图 -->
                 <g v-if="state.layerVisibility.baseMap">
-                    <!-- <image class="base-map" href="/Changan.png" x="0" y="0" width="1039" height="1236" :opacity="state.mapOpacity" /> -->
-                    <image class="base-map" href="/tang.png" x="0" y="0" width="1509" height="1008"
+                    <image class="base-map" :href="data.baseMapSource" 
+                        x="0" 
+                        y="0" 
+                        :width="state.baseMapSize.width" 
+                        :height="state.baseMapSize.height"
                         :opacity="state.mapOpacity" />
                 </g>
 
