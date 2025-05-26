@@ -7,7 +7,7 @@
     <div class="toolbar">
       <toolBar> </toolBar>
     </div>
-    <LayerManager :height="height * 0.85" :width="width / 5" :left="width / 100" :top="height / 10"
+    <LayerManager :key="layerManagerComponentKey" :height="height * 0.85" :width="width / 5" :left="width / 100" :top="height / 10"
       ref="layerManager" />
     <Info></Info>
   </div>
@@ -22,7 +22,7 @@ import { exportJson } from "@/utils";
 import Info from './components/Info.vue';
 import { useStoreData, useStoreState } from './stores/index.js';
 import { getImageSize } from './utils/index'
-import { nextTick, ref, watch, useTemplateRef, toRaw, inject } from 'vue';
+import { nextTick, ref, watch, useTemplateRef, toRaw, inject, onMounted } from 'vue';
 import toolBar from './components/toolBar.vue';
 // ------
 const emitter = inject('emitter');
@@ -30,33 +30,9 @@ const emitter = inject('emitter');
 const layerManagerComponent = useTemplateRef('layerManager');
 const data = useStoreData();
 const state = useStoreState();
+const layerManagerComponentKey = ref(0);
 
-const selectedData = QuanTangData
-if (selectedData == Changan) {
-  data.baseMapSource = '/Changan.png';
-  state.mapOpacity = 0.2;
-} else {
-  data.baseMapSource = '/QuanTang.png';
-  state.mapOpacity = 0.7;
-}
-getImageSize(data.baseMapSource).then(baseMapSize => {
-  state.baseMapSize = baseMapSize
-})
-// TangData
-const assignLabelById = (arr) => {
-  arr.forEach((d) => {
-    d.label = d.id
-  })
-}
-for (let key of Object.keys(selectedData)) {
-  data.addPredefinedLayer(key, selectedData[key]);
-  state.addLayerVisibility(key)
-  assignLabelById(data.layers[key]);
-}
-state.addLayerVisibility('baseMap');
-
-
-const init = () => {
+const refreshWhenUploadUserData = () => {
   if (state.isUpload) {
     Object.keys(data.uploadedData.layer).forEach(key => {
       data.layers[key] = data.uploadedData.layer[key];
@@ -85,7 +61,7 @@ watch(
   () => state.isUpload,
   (newState) => {
     if (newState) {
-      init();
+      refreshWhenUploadUserData();
     }
   })
 
@@ -97,6 +73,44 @@ emitter.on('downloadSvg', () => {
   }
   exportJson(_)
 })
+
+const init = (selectedData) => {
+  if (selectedData == Changan) {
+    data.baseMapSource = '/Changan.png';
+    state.mapOpacity = 0.2;
+  } else {
+    data.baseMapSource = '/QuanTang.png';
+    state.mapOpacity = 0.7;
+  }
+  getImageSize(data.baseMapSource).then(baseMapSize => {
+    state.baseMapSize = baseMapSize
+  })
+  
+  // TangData
+  const assignLabelById = (arr) => {
+    arr.forEach((d) => {
+      d.label = d.id
+    })
+  }
+  for (let key of Object.keys(selectedData)) {
+    data.addPredefinedLayer(key, selectedData[key]);
+    state.addLayerVisibility(key)
+    assignLabelById(data.layers[key]);
+  }
+  state.addLayerVisibility('baseMap');
+}
+
+init(Changan);
+
+watch(
+  ()=> state.usedDataName,
+  (newDataName) => {
+    state.$reset();
+    data.$reset();
+    init(eval(newDataName));
+    layerManagerComponentKey.value += 1; // 手动刷新layerManager
+  }
+)
 
 
 const height = ref(window.innerHeight);

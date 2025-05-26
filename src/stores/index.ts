@@ -7,6 +7,8 @@ export const useStoreState = defineStore('state', () => {
     const baseMapVisible: Ref<boolean> = ref(true);
     const baseMapSize: Ref<Object> = ref({});
 
+    const usedDataName: Ref<string> = ref("Changan");
+
     const mapOpacity: Ref<number> = ref(0.2);
     const isExport: Ref<boolean> = ref(false);
     const isUpload: Ref<boolean> = ref(false);
@@ -14,21 +16,21 @@ export const useStoreState = defineStore('state', () => {
 
     const layerVisibility: Ref<Object> = ref({});
     const addLayerVisibility = (layerName: string | string[]) => {
-        if(typeof layerName === 'string'){
+        if (typeof layerName === 'string') {
             layerVisibility.value[layerName] = true;
-        }else{
-            for(let i of layerName){
+        } else {
+            for (let i of layerName) {
                 layerVisibility.value[i] = true;
             }
         }
     }
-    
+
     const hoveredElementId: Ref<null | string> = ref(null);
     const hoveredElement: Ref<null | SVGElement> = ref(null);
     const hoveredGroup: Ref<null | SVGElement[]> = ref([])
     const mode: Ref<string> = ref("layer")
     const focusedElementId: Ref<null | string> = ref(null);
-    const hoveredAnnotationId: Ref<null | number> = ref(null);
+    // const hoveredAnnotationId: Ref<null | number> = ref(null);
 
     const mouseMode: Ref<string> = ref("default");
     const editing: Ref<boolean> = ref(false); //是否正在修改信息
@@ -37,7 +39,7 @@ export const useStoreState = defineStore('state', () => {
     const addingLayer: Ref<LayerEntity> = ref(null); //是否正在添加图层实体
 
     const logicRelatedIds: Ref<Set<string>> = ref(new Set()) // 保存所有在logic组中出现的实体id，在删除实体图层时使用这个数组检查，防止删除在逻辑组中使用过的实体
-    const mousePositionOnMap: Ref<number[]> = ref([0, 0]) 
+    const mousePositionOnMap: Ref<number[]> = ref([0, 0])
     const clickMapBool: Ref<boolean> = ref(false);
 
     const hoveredSVGElement = (e: PointerEvent, id: null | string) => {
@@ -48,15 +50,40 @@ export const useStoreState = defineStore('state', () => {
         hoveredElement.value = e.target as SVGElement | null;
     }
 
+    const getDefaultState = function() {
+        return {
+          count: 0,
+          user: null,
+          // 其它默认字段
+        }
+      }
+
+    function $reset() {
+        baseMapVisible.value = true;
+        baseMapSize.value = {};
+        layerVisibility.value = {};
+        hoveredElementId.value = null;
+        hoveredElement.value = null;
+        hoveredGroup.value = [];
+        mode.value = 'layer';
+        focusedElementId.value = null;
+        mouseMode.value = 'default';
+        editing.value= false; //是否正在修改信息
+        selecting.value = false; //是否正在修改信息
+        addingLayerEntity.value = false; //是否正在添加图层实体
+        addingLayer.value = null; //是否正在添加图层实体
+    }
+
     return {
         baseMapVisible,
         baseMapSize,
         mapOpacity,
+        usedDataName,
         hoveredElementId,
         hoveredGroup,
         hoveredElement,
         focusedElementId,
-        hoveredAnnotationId,
+        // hoveredAnnotationId,
 
         isUpload,
         isExport,
@@ -75,12 +102,13 @@ export const useStoreState = defineStore('state', () => {
         clickMapBool,
 
         hoveredSVGElement,
-        addLayerVisibility
+        addLayerVisibility,
+        $reset
     }
 })
 
 export const useStoreData = defineStore('data', () => {
-    const predefinedLayers = [];
+    var predefinedLayers = [];
     const layers = ref({})
 
     // 初始化的时候使用，记录哪些layers是预先设定的
@@ -99,7 +127,7 @@ export const useStoreData = defineStore('data', () => {
         _ = _.concat(predefinedLayers.map(layerName => {
             return { name: layerName, label: layerName, visible: true, children: layers.value[layerName] }
         }))
-        for(let k of userAddKeys.value){
+        for (let k of userAddKeys.value) {
             _.push({ name: k, label: k, visible: true, children: layers.value[k], userAdded: true });
         }
         return ref(_)
@@ -109,12 +137,18 @@ export const useStoreData = defineStore('data', () => {
         return Object.keys(layers.value).filter((key) => !predefinedLayers.includes(key))
     })
 
+    const $reset = function(){
+        predefinedLayers = [];
+        layers.value = {};
+    }
+
     return {
         layers,
         userAddKeys,
         addLayer,
         addPredefinedLayer,
         getLayers,
+        $reset
     }
 })
 

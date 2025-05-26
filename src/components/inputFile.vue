@@ -1,6 +1,6 @@
 <template>
     <div>
-        <div @click="triggerUpload" class="uploadDiv">
+        <div @click="triggerUpload">
             上传数据
         </div>
         <input type="file" accept=".json" ref="fileInput" style="display: none" @change="onFileChange" />
