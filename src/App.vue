@@ -7,8 +7,8 @@
     <div class="toolbar">
       <toolBar> </toolBar>
     </div>
-    <LayerManager :key="layerManagerComponentKey" :height="height * 0.85" :width="width / 5" :left="width / 100" :top="height / 10"
-      ref="layerManager" />
+    <LayerManager :key="layerManagerComponentKey" :height="height * 0.85" :width="width / 5" :left="width / 100"
+      :top="height / 10" ref="layerManager" />
     <Info></Info>
   </div>
 </template>
@@ -24,6 +24,8 @@ import { useStoreData, useStoreState } from './stores/index.js';
 import { getImageSize } from './utils/index'
 import { nextTick, ref, watch, useTemplateRef, toRaw, inject, onMounted } from 'vue';
 import toolBar from './components/toolBar.vue';
+import QuanTangPNG from '@/assets/QuanTang.png'
+import ChanganPNG from '@/assets/Changan.png'
 // ------
 const emitter = inject('emitter');
 
@@ -76,16 +78,16 @@ emitter.on('downloadSvg', () => {
 
 const init = (selectedData) => {
   if (selectedData == Changan) {
-    data.baseMapSource = '/Changan.png';
+    data.baseMapSource = ChanganPNG;
     state.mapOpacity = 0.2;
   } else {
-    data.baseMapSource = '/QuanTang.png';
+    data.baseMapSource = QuanTangPNG;
     state.mapOpacity = 0.7;
   }
   getImageSize(data.baseMapSource).then(baseMapSize => {
     state.baseMapSize = baseMapSize
   })
-  
+
   // TangData
   const assignLabelById = (arr) => {
     arr.forEach((d) => {
@@ -103,11 +105,15 @@ const init = (selectedData) => {
 init(Changan);
 
 watch(
-  ()=> state.usedDataName,
+  () => state.usedDataName,
   (newDataName) => {
     state.$reset();
     data.$reset();
-    init(eval(newDataName));
+    if (newDataName === 'QuanTangData') {
+      init(QuanTangData);
+    } else if (newDataName === 'Changan') {
+      init(Changan);
+    }
     layerManagerComponentKey.value += 1; // 手动刷新layerManager
   }
 )
