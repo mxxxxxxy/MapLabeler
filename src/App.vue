@@ -38,7 +38,7 @@ const refreshWhenUploadUserData = () => {
   if (state.isUpload) {
     Object.keys(data.uploadedData.layer).forEach(key => {
       data.layers[key] = data.uploadedData.layer[key];
-      assignLabelById(data.layers[key]);
+      // assignLabelById(data.layers[key]);
     });
     state.addLayerVisibility(data.userAddKeys);
     layerManagerComponent.value.layers = data.getLayers().value;
@@ -71,10 +71,17 @@ emitter.on('downloadSvg', () => {
   const _ = {
     layer: toRaw(data.layers),
     logic: toRaw(layerManagerComponent.value.logics),
-    editDataDict: toRaw(layerManagerComponent.value.editDataDict)
+    editDataDict: toRaw(layerManagerComponent.value.editDataDict),
+    dataName: state.usedDataName
   }
-  exportJson(_)
+  exportJson(_, `${state.usedDataName}.json`)
 })
+
+const assignLabelById = (arr) => {
+    arr.forEach((d) => {
+      d.label = d.id
+    })
+}
 
 const init = (selectedData) => {
   if (selectedData == Changan) {
@@ -89,11 +96,6 @@ const init = (selectedData) => {
   })
 
   // TangData
-  const assignLabelById = (arr) => {
-    arr.forEach((d) => {
-      d.label = d.id
-    })
-  }
   for (let key of Object.keys(selectedData)) {
     data.addPredefinedLayer(key, selectedData[key]);
     state.addLayerVisibility(key)

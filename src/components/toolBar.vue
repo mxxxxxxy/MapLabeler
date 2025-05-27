@@ -20,7 +20,10 @@ const downloadSvg = function () {
 }
 
 const switch_data = function () {
-    state.usedDataName = state.usedDataName === 'Changan' ? 'QuanTangData' : 'Changan';
+    const isConfirm = window.confirm("请确认已经保存修改的标注内容，切换后将丢失未保存的修改！");
+    if(isConfirm){
+        state.usedDataName = state.usedDataName === 'Changan' ? 'QuanTangData' : 'Changan';
+    }
 }
 
 </script>

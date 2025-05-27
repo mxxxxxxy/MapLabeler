@@ -26,14 +26,26 @@ function onFileChange(event) {
     reader.onload = function (e) {
         try {
             jsonContent = JSON.parse(e.target.result);
+            if(state.usedDataName !== jsonContent.dataName){
+                window.alert("上传数据不匹配当前底图！请重新上传")
+                setTimeout(()=>{
+                    state.isUpload = false;
+                    reader.abort();
+                    fileInput.value.value = '';
+                }, 1000)
+                return
+            }
             data.uploadedData = jsonContent;
             state.isUpload = true;
-            // setTimeout(()=>{
-            //     state.isUpload = false;
-            // })
+            setTimeout(()=>{
+                state.isUpload = false;
+                reader.abort();
+                fileInput.value.value = '';
+            }, 1000)
         } catch (err) {
             alert('文件不是合法的 JSON 格式！');
             jsonContent = null;
+            reader.abort();
         }
     };
     reader.readAsText(file);
