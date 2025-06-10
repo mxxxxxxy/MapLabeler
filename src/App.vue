@@ -7,7 +7,7 @@ import SvgPlotter from './components/SvgPlotter.vue';
 import LayerManager from './components/LayerManager.vue';
 import { useStoreData } from './stores/index.js';
 import { ref } from 'vue';
-import { pathCommandsFromString } from 'd3-interpolate-path';
+// import { pathCommandsFromString } from 'd3-interpolate-path';
 
 const data = useStoreData();
 data.pointCoordinates = PKUData.pointCoordinates;
