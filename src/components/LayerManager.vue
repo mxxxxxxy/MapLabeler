@@ -100,11 +100,11 @@
                         添加新实体图层
                     </div>
                     <div v-if="addingLayerDiv" class="potential_layer">
-                        <div class="inputDiv">
+                        <div  class="inputDiv">
                             <span class="attributeName">图层名</span>
                             <input @blur="confirm" ref="input_layerName" class="input" v-model="newLayerName"
-                                style="margin-right: 5px;">
-                            <div class="btn" @click="confirm">确认</div>
+                                style="margin-right: 5px; height: 24px;">
+                            <div class="btn" @click="confirm" style="width: auto; height: 100%;">确认</div>
                         </div>
                     </div>
                 </div>
@@ -152,7 +152,7 @@
                         </div>
                         <div class="logicSet">
                             <div class="logicItemHeader">
-                                <span class="attributeName" style="width: 5em; margin-left: 3px;">集合：</span>
+                                <span class="attributeName" style="width: 5em;">集合：</span>
                                 <div style="margin-left: auto; display: flex;">
                                     <div class="icon" @click="addLogic(logic, 'set')">
                                         <img :src="addUrl" alt="">
@@ -725,7 +725,7 @@ defineExpose({ layers, logics,  editDataDict })
     display: flex;
     padding: 0px 3px;
     margin: 1px 0px;
-    /* width: 100%; */
+    /* height: 100%; */
 }
 
 .attributeName {
@@ -799,5 +799,9 @@ defineExpose({ layers, logics,  editDataDict })
     padding: 3px;
     border-radius: 6px;
     /* pointer-events: none; */
+}
+
+.potential_layer{
+    height: 28px;
 }
 </style>

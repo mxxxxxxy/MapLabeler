@@ -1,25 +1,6 @@
 <template>
     <div class="svg-plotter-container"
         :style="{ height: containerHeight + 'px', width: containerWidth + 'px', left: left + 'px', top: top + 'px' }">
-        <!-- 控制面板 -->
-        <div class="control-container">
-            <div class="ctrl-bottom-right">
-                <div class="ctrl-group">
-                    <button class="ctrl-zoom-in" type="button" aria-label="Zoom in" @click="zoomIn">
-                        <span class="icon" aria-hidden="true" title="放大"></span>
-                    </button>
-                    <button class="ctrl-zoom-out" type="button" aria-label="Zoom out" @click="zoomOut">
-                        <span class="icon" aria-hidden="true" title="缩小"></span>
-                    </button>
-                </div>
-            </div>
-            <div class="ctrl-top-right">
-                <span class="compass-label">北</span>
-                <span class="compass-subtext">North</span>
-                <img src="@/assets/compass.svg" alt="compass" class="compass-img" />
-            </div>
-        </div>
-
         <!-- SVG 地图 -->
         <svg ref="mapSvg" class="map-svg">
             <!-- 缩放&平移容器 -->
@@ -160,9 +141,6 @@ const zoom = ref(d3.zoom());
 const map = ref(null);
 const mapSvg = ref(null);
 
-// emitter.on('downloadSvg', () => {
-//     exportSVG(mapSvg.value);
-// })
 
 function clickEvent(e, d) {
     if (state.addingLayerEntity) {
@@ -237,6 +215,8 @@ const _scale = (transform, k) =>
 //     }
 // }
 
+
+
 // 缩放函数：放大
 const zoomIn = () => {
     const svg = d3.select(mapSvg.value);
@@ -269,22 +249,30 @@ const isHightlight = (attr) => {
     return state.hoveredElementId === attr.id || state.hoveredGroup.includes(attr.id);
 }
 
-onMounted(() => {
-    const svg = d3.select(mapSvg.value);
-    const g = d3.select(map.value);
 
-    // 初始化 d3.zoom
-    zoom.value = d3.zoom().on("zoom", (e) => {
-        g.attr("transform", e.transform.toString());
-    });
-    svg.call(zoom.value)
+const centerMap = () => {
+    const svg = d3.select(mapSvg.value)
+
+    scale.value = 0.65;
+    translateX.value = (width.value - state.baseMapSize.width * scale.value) / 2; // 水平居中
+    translateY.value = (height.value - state.baseMapSize.height * scale.value) / 2; // 垂直居中
+
+    svg.transition().duration(500)
         .call(
             zoom.value.transform,
             d3.zoomIdentity
                 .translate(translateX.value, translateY.value)
                 .scale(scale.value)
         );
+}
 
+onMounted(() => {
+    const svg = d3.select(mapSvg.value)
+    const mapContainer = d3.select(map.value);
+    zoom.value = d3.zoom().on("zoom", (e) => {
+        mapContainer.attr("transform", e.transform.toString());
+    });
+    svg.call(zoom.value)
     window.addEventListener("resize", onResize);
 });
 
@@ -292,6 +280,10 @@ onMounted(() => {
 onUnmounted(() => {
     window.removeEventListener("resize", onResize);
 });
+
+
+
+defineExpose({ centerMap, zoomIn, zoomOut })
 </script>
 
 <style scoped>
@@ -349,96 +341,7 @@ circle.highlight {
 }
 
 
-/* 控制面板容器 */
-.control-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-}
 
-/* 控制按钮通用样式 */
-.ctrl-group {
-    background: #fff;
-    border-radius: 4px;
-    box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.1);
-    z-index: 2;
-}
 
-.ctrl-group button {
-    display: block;
-    width: 4vh;
-    height: 4vh;
-    padding: 0;
-    background: none;
-    border: none;
-    cursor: pointer;
-    outline: none;
-}
 
-.ctrl-group button+button {
-    border-top: 1px solid #ddd;
-}
-
-.ctrl-group button:first-child {
-    border-radius: 4px 4px 0 0;
-}
-
-.ctrl-group button:last-child {
-    border-radius: 0 0 4px 4px;
-}
-
-/* 控制按钮图标 */
-.icon {
-    display: block;
-    width: 100%;
-    height: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-
-.ctrl-zoom-in .icon {
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23333' viewBox='0 0 29 29'%3E%3Cpath d='M14.5 8.5c-.75 0-1.5.75-1.5 1.5v3h-3c-.75 0-1.5.75-1.5 1.5S9.25 16 10 16h3v3c0 .75.75 1.5 1.5 1.5S16 19.75 16 19v-3h3c.75 0 1.5-.75 1.5-1.5S19.75 13 19 13h-3v-3c0-.75-.75-1.5-1.5-1.5z'/%3E%3C/svg%3E");
-}
-
-.ctrl-zoom-out .icon {
-    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='%23333' viewBox='0 0 29 29'%3E%3Cpath d='M10 13c-.75 0-1.5.75-1.5 1.5S9.25 16 10 16h9c.75 0 1.5-.75 1.5-1.5S19.75 13 19 13h-9z'/%3E%3C/svg%3E");
-}
-
-/* 控制面板定位 */
-.ctrl-bottom-right,
-.ctrl-top-right {
-    position: absolute;
-    right: 1em;
-    z-index: 2;
-}
-
-.ctrl-bottom-right {
-    bottom: 1em;
-}
-
-.ctrl-top-right {
-    top: 1em;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 0.5em;
-}
-
-/* 指北针 */
-.compass-label {
-    font-size: 3vh;
-    color: #333;
-}
-
-.compass-subtext {
-    margin-top: -1vh;
-    margin-bottom: -1vh;
-}
-
-.compass-img {
-    width: 7vh;
-    height: 7vh;
-}
 </style>

@@ -3,9 +3,27 @@
     <span class="title" style="position: absolute; top: 0; left: 0; z-index: 1;">
       古代地理空间主题地图
     </span>
-    <SvgPlotter :height="height" :width="width / 2" :left="width / 4" :top="0" />
+    <SvgPlotter ref="plotter" :height="height" :width="width / 2" :left="width / 4" :top="0" />
     <div class="toolbar">
       <toolBar> </toolBar>
+      <div class="control-container">
+        <div class="ctrl-group">
+            <div class="btn" aria-label="Zoom in" @click="svgPlotterRef.zoomIn">
+              放大
+            </div>
+            <div class="btn" aria-label="Zoom out" @click="svgPlotterRef.zoomOut">
+              缩小
+            </div>
+            <div class="btn" aria-label="Zoom out" @click="svgPlotterRef.centerMap">
+              还原
+            </div>
+        </div>
+              <!-- <div class="ctrl-top-right">
+                  <span class="compass-label">北</span>
+                  <span class="compass-subtext">North</span>
+                  <img src="@/assets/compass.svg" alt="compass" class="compass-img" />
+              </div> -->
+      </div>
     </div>
     <LayerManager :key="layerManagerComponentKey" :height="height * 0.85" :width="width / 5 < 345.6 ? 345.6 : width / 5" :left="width / 100"
       :top="height / 10" ref="layerManager" />
@@ -28,7 +46,7 @@ import QuanTangPNG from '@/assets/QuanTang.png'
 import ChanganPNG from '@/assets/Changan.png'
 // ------
 const emitter = inject('emitter');
-
+const svgPlotterRef = useTemplateRef('plotter')
 const layerManagerComponent = useTemplateRef('layerManager');
 const data = useStoreData();
 const state = useStoreState();
@@ -95,7 +113,8 @@ const init = (selectedData) => {
     state.mapOpacity = 0.7;
   }
   getImageSize(data.baseMapSource).then(baseMapSize => {
-    state.baseMapSize = baseMapSize
+    state.baseMapSize = baseMapSize;
+    svgPlotterRef.value.centerMap();
   })
 
   // TangData
@@ -107,17 +126,23 @@ const init = (selectedData) => {
   state.addLayerVisibility('baseMap');
 }
 
+// onMounted(()=>{
+//   svgPlotterRef.value.centerMap();
+// })
+
 init(Changan);
 
 watch(
   () => state.usedDataName,
-  (newDataName) => {
+  async (newDataName) => {
     state.$reset();
     data.$reset();
     if (newDataName === 'QuanTangData') {
       init(QuanTangData);
+      // svgPlotterRef.value.centerMap();
     } else if (newDataName === 'Changan') {
       init(Changan);
+      // svgPlotterRef.value.centerMap();
     }
     layerManagerComponentKey.value += 1; // 手动刷新layerManager
   }
@@ -144,8 +169,8 @@ window.addEventListener('resize', () => {
 
 .toolbar {
   position: absolute;
-  top: 10%;
-  right: 0px;
+  top: 5%;
+  right: 5%;
 }
 
 .root-div {
@@ -154,4 +179,6 @@ window.addEventListener('resize', () => {
   overflow: hidden;
   background-image: url(/background.png);
 }
+
+
 </style>
