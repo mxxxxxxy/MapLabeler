@@ -1,33 +1,125 @@
+<template>
+  <div class="root-div">
+    <span class="title" style="position: absolute; top: 0; left: 0; z-index: 1;">
+      古代地理空间主题地图
+    </span>
+    <SvgPlotter :height="height" :width="width / 2" :left="width / 4" :top="0" />
+    <div class="toolbar">
+      <toolBar> </toolBar>
+    </div>
+    <LayerManager :key="layerManagerComponentKey" :height="height * 0.85" :width="width / 5" :left="width / 100"
+      :top="height / 10" ref="layerManager" />
+    <Info></Info>
+  </div>
+</template>
+
 <script setup>
-// import GengmaData_zh from './components/GengmaData_zh.js';
-import PKUData from './components/PKUData.js';
-import TangData from './components/TangData.json';
-import DSLManager from './components/DSLManager.vue';
+import Changan from '@/assets/TangData.json';
+import QuanTangData from '@/assets/QuanTangData.json';
 import SvgPlotter from './components/SvgPlotter.vue';
 import LayerManager from './components/LayerManager.vue';
-import { useStoreData } from './stores/index.js';
-import { ref } from 'vue';
-// import { pathCommandsFromString } from 'd3-interpolate-path';
+import { exportJson } from "@/utils";
+import Info from './components/Info.vue';
+import { useStoreData, useStoreState } from './stores/index.js';
+import { getImageSize } from './utils/index'
+import { nextTick, ref, watch, useTemplateRef, toRaw, inject, onMounted } from 'vue';
+import toolBar from './components/toolBar.vue';
+import QuanTangPNG from '@/assets/QuanTang.png'
+import ChanganPNG from '@/assets/Changan.png'
+// ------
+const emitter = inject('emitter');
 
+const layerManagerComponent = useTemplateRef('layerManager');
 const data = useStoreData();
-data.pointCoordinates = PKUData.pointCoordinates;
-data.pathData = PKUData.pathCoordinates;
-data.areaCoordinates = PKUData.areaCoordinates;
+const state = useStoreState();
+const layerManagerComponentKey = ref(0);
 
-data.water = TangData['水系'];
-data.wall = TangData['城墙'];
-data.building = TangData['城坊'];
-// data.building.forEach(d=>{
-//     const points = pathCommandsFromString(d.d);
-//     console.log(points)
-//     // const x = points[0].x + points[1].x / 2
-//     // const y = points[0].y + points[2].y / 2
-//     // const x = points[1].x + 20
-//     // const y = points[2].y - 20
-//     d.pos = [x,y]
-// })
-data.door = TangData['城门'];
-data.road = TangData['道路'];
+const refreshWhenUploadUserData = () => {
+  if (state.isUpload) {
+    Object.keys(data.uploadedData.layer).forEach(key => {
+      data.layers[key] = data.uploadedData.layer[key];
+      // assignLabelById(data.layers[key]);
+    });
+    state.addLayerVisibility(data.userAddKeys);
+    layerManagerComponent.value.layers = data.getLayers().value;
+    layerManagerComponent.value.editDataDict = data.uploadedData.editDataDict;
+    // 逻辑组中需要重新找到set和sequence中的html元素
+    // 需要等待更新layer之后再添加，因为如果逻辑组中存在用户自定义的layer元素，直接添加找不到。
+    nextTick(() => {
+      data.uploadedData.logic.forEach((d, i, arr) => {
+        d.sequence.forEach((_) => {
+          _.ele = document.getElementById(_.id);
+        })
+        d.set.forEach((_) => {
+          _.ele = document.getElementById(_.id);
+        })
+      })
+      layerManagerComponent.value.logics = data.uploadedData.logic;
+    })
+  }
+}
+
+watch(
+  () => state.isUpload,
+  (newState) => {
+    if (newState) {
+      refreshWhenUploadUserData();
+    }
+  })
+
+emitter.on('downloadSvg', () => {
+  const _ = {
+    layer: toRaw(data.layers),
+    logic: toRaw(layerManagerComponent.value.logics),
+    editDataDict: toRaw(layerManagerComponent.value.editDataDict),
+    dataName: state.usedDataName
+  }
+  exportJson(_, `${state.usedDataName}.json`)
+})
+
+const assignLabelById = (arr) => {
+    arr.forEach((d) => {
+      d.label = d.id
+    })
+}
+
+const init = (selectedData) => {
+  if (selectedData == Changan) {
+    data.baseMapSource = ChanganPNG;
+    state.mapOpacity = 0.2;
+  } else {
+    data.baseMapSource = QuanTangPNG;
+    state.mapOpacity = 0.7;
+  }
+  getImageSize(data.baseMapSource).then(baseMapSize => {
+    state.baseMapSize = baseMapSize
+  })
+
+  // TangData
+  for (let key of Object.keys(selectedData)) {
+    data.addPredefinedLayer(key, selectedData[key]);
+    state.addLayerVisibility(key)
+    assignLabelById(data.layers[key]);
+  }
+  state.addLayerVisibility('baseMap');
+}
+
+init(Changan);
+
+watch(
+  () => state.usedDataName,
+  (newDataName) => {
+    state.$reset();
+    data.$reset();
+    if (newDataName === 'QuanTangData') {
+      init(QuanTangData);
+    } else if (newDataName === 'Changan') {
+      init(Changan);
+    }
+    layerManagerComponentKey.value += 1; // 手动刷新layerManager
+  }
+)
+
 
 const height = ref(window.innerHeight);
 const width = ref(window.innerWidth);
@@ -39,37 +131,24 @@ window.addEventListener('resize', () => {
 
 </script>
 
-<template>
-    <div style="width: 100vw; height: 100vh; overflow: hidden;">
-      <span class = "title" style="position: absolute; top: 0; left: 0; z-index: 1;">
-        古代地理空间主题地图
-      </span>
-      <SvgPlotter
-        :height = "height"
-        :width = "width/2"
-        :left = "width/4"
-        :top = "0"
-      />
-      <!-- <DSLManager
-        :height = "height*0.85"
-        :width = "width/5"
-        :right = "width/100"
-        :top = "height/10"
-      /> -->
-      <LayerManager
-        :height = "height*0.85"
-        :width = "width/5"
-        :left = "width/100"
-        :top = "height/10"
-      />
-    </div>
-</template>
-
 <style scoped>
 .title {
   font-size: 2em;
   padding: 10px;
   font-weight: bold;
   color: #333;
+}
+
+.toolbar {
+  position: absolute;
+  top: 10%;
+  right: 0px;
+}
+
+.root-div {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background-image: url(/background.png);
 }
 </style>

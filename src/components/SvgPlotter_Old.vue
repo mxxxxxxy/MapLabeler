@@ -27,62 +27,108 @@
                 :class="{ 'circular-curcor': state.addingLayerEntity }">
                 <!-- 底图 -->
                 <g v-if="state.layerVisibility.baseMap">
-                    <image class="base-map" :href="data.baseMapSource" 
-                        x="0" 
-                        y="0" 
-                        :width="state.baseMapSize.width" 
-                        :height="state.baseMapSize.height"
+                    <image class="base-map" href="/Changan.png" x="0" y="0" width="1039" height="1236"
                         :opacity="state.mapOpacity" />
                 </g>
 
                 <g v-for="key in Object.keys(data.layers)">
                     <g v-if="state.layerVisibility[key]">
                         <g v-for="(attr, idx) in data.layers[key]" v-show="!attr.visible">
-                            <path v-if="attr.tag === 'path'" 
-                                :key="attr.id" 
-                                :id="attr.id" 
-                                :d="attr.d" 
-                                :belong="key" 
-                                :_label="attr.label"
-                                :stroke="attr.stroke" 
-                                :fill="attr.fill ? attr.fill : 'none'" 
-                                :stroke-width="attr['stroke-width']"
+                            <path :key="attr.id" :id="attr.id" :d="attr.d" :belong="key" :_label="attr.label"
+                                :stroke="attr.stroke" fill="rgba(228,243,246,0.9)" :stroke-width="attr['stroke-width']"
                                 :class="{ highlight: isHightlight(attr) }"
                                 @mouseenter="state.hoveredSVGElement($event, attr.id)"
-                                @mouseleave="state.hoveredSVGElement($event, null)" 
-                                @click="clickEvent($e, attr)" />
+                                @mouseleave="state.hoveredSVGElement($event, null)" @click="clickEvent($e, attr)" />
 
-                            <circle v-if="attr.tag === 'circle'" 
-                                :key="attr.id" 
-                                :id="attr.id" 
-                                :cx="attr.cx"
-                                :cy="attr.cy"
-                                :r="attr.r"
-                                :belong="key" 
-                                :_label="attr.label"
-                                :stroke="attr.stroke" 
-                                :fill="attr.fill ? attr.fill : 'none'" 
-                                :stroke-width="attr['stroke-width']"
-                                :class="{ highlight: isHightlight(attr) }"
-                                @mouseenter="state.hoveredSVGElement($event, attr.id)"
-                                @mouseleave="state.hoveredSVGElement($event, null)" 
-                                @click="clickEvent($e, attr)" />
-
-                            <text v-for="t in attr.text" 
-                                :id="`text${t.text}`" 
-                                :key="attr.id" 
-                                :stroke="attr.stroke"
-                                :x="t.pos ? t.pos[0] : 0" 
-                                :y="t.pos ? t.pos[1] : 0"
-                                :fill="isHightlight(attr) ? 'red' : 'black'" 
-                                :stroke-width="0"
-                                :font-size="t['font-size'] ? t['font-size'] : 12"
-                                :transform="t['transform']">
+                            <text v-for="t in attr.text" :id="`text${t.text}`" :key="attr.id" :stroke="attr.stroke"
+                                :x="t.pos ? t.pos[0] : 0" :y="t.pos ? t.pos[1] : 0"
+                                :fill="isHightlight(attr) ? 'red' : 'black'" :stroke-width="0">
                                 {{ t.text }}
                             </text>
                         </g>
                     </g>
                 </g>
+
+                <!-- 城坊 -->
+                <!-- <g class="areas" v-if="state.layerVisibility.building">
+                    <g ref="buildingGroups" v-for="(attr, idx) in data.layers.building" v-show="!attr.visible">
+                        <path :key="attr.id" :id="attr.id" :d="attr.d" belong="building" :_label="attr.label"
+                            :stroke="attr.stroke" fill="rgba(228,243,246,0.9)" :stroke-width="attr['stroke-width']"
+                            :class="{ highlight: isHightlight(attr) }"
+                            @mouseenter="state.hoveredSVGElement($event, attr.id)"
+                            @mouseleave="state.hoveredSVGElement($event, null)" @click="clickEvent($e, attr)" />
+
+                        <text v-for="t in attr.text" :id="`text${t.text}`" :key="attr.id" :stroke="attr.stroke"
+                            :x="t.pos ? t.pos[0] : 0" :y="t.pos ? t.pos[1] : 0"
+                            :fill="isHightlight(attr) ? 'red' : 'black'" :stroke-width="0">
+                            {{ t.text }}
+                        </text>
+                    </g>
+                </g> -->
+
+                <!-- 道路 -->
+                <!-- <g class="paths" v-if="state.layerVisibility.road">
+                    <g v-for="(attr, idx) in data.layers.road" v-show="!attr.visible">
+                        <path :id="attr.id" :d="attr.d" :stroke="attr.stroke" belong="road" :_label="attr.label"
+                            :fill="attr.fill" :stroke-width="attr['stroke-width']" stroke-linecap="round"
+                            stroke-linejoin="round" :class="{ highlight: isHightlight(attr) }"
+                            @mouseenter="state.hoveredSVGElement($event, attr.id)"
+                            @mouseleave="state.hoveredSVGElement($event, null)" @click="clickEvent($e, attr)" />
+
+                        <text v-for="t in attr.text" :key="idx" stroke="2" :x="t.pos ? t.pos[0] : 0"
+                            :y="t.pos ? t.pos[1] : 0" :fill="isHightlight(attr) ? 'red' : 'black'" font-size="10">
+                            {{ t.text }}
+                        </text>
+                    </g>
+                </g> -->
+
+                <!-- 水系 -->
+                <!-- <g class="paths" v-if="state.layerVisibility.water">
+                    <g v-for="(attr, idx) in data.layers.water" v-show="!attr.visible">
+                        <path :id="attr.id" :d="attr.d" :stroke="attr.stroke" fill="none" belong="water"
+                            :_label="attr.label" :stroke-width="attr['stroke-width']" stroke-linecap="round"
+                            stroke-linejoin="round" :class="{ highlight: isHightlight(attr) }"
+                            @mouseenter="state.hoveredSVGElement($event, attr.id)"
+                            @mouseleave="state.hoveredSVGElement($event, null)" @click="clickEvent($e, attr)" />
+
+                        <text v-for="t in attr.text" :key="idx" stroke="2" :x="t.pos ? t.pos[0] : 0"
+                            :y="t.pos ? t.pos[1] : 0" :fill="isHightlight(attr) ? 'red' : 'black'" font-size="18">
+                            {{ t.text }}
+                        </text>
+                    </g>
+                </g> -->
+
+                <!-- 城墙 -->
+                <!-- <g class="areas" v-if="state.layerVisibility.wall">
+                    <g v-for="(attr, idx) in data.layers.wall" v-show="!attr.visible">
+                        <path :key="idx" :d="attr.d" :stroke="attr.stroke" :id="attr.id" fill="none"
+                            :stroke-width="attr['stroke-width']" belong="wall" :_label="attr.label"
+                            :class="{ highlight: isHightlight(attr) }"
+                            @mouseenter="state.hoveredSVGElement($event, attr.id)"
+                            @mouseleave="state.hoveredSVGElement($event, null)" @click="clickEvent($e, attr)" />
+
+                        <text v-for="t in attr.text" :key="attr.id" :stroke="attr.stroke" :x="t.pos ? t.pos[0] : 0"
+                            :y="t.pos ? t.pos[1] : 0" :fill="isHightlight(attr) ? 'red' : 'black'" font-size="12">
+                            {{ t.text }}
+                        </text>
+                    </g>
+                </g> -->
+
+                <!-- 城门 -->
+                <!-- <g class="areas" v-if="state.layerVisibility.door">
+                    <g v-for="(attr, idx) in data.layers.door" v-show="!attr.visible">
+                        <path :key="idx" :d="attr.d" :id="attr.id" belong="door" :_label="attr.label"
+                            :stroke="attr.stroke" :fill="attr.fill" :stroke-width="attr['stroke-width']"
+                            :class="{ highlight: isHightlight(attr) }"
+                            @mouseenter="state.hoveredSVGElement($event, attr.id)"
+                            @mouseleave="state.hoveredSVGElement($event, null)" @click="clickEvent($e, attr)" />
+
+                        <text v-for="t in attr.text" :key="attr.id" :stroke="attr.stroke" :x="t.pos ? t.pos[0] : 0"
+                            :y="t.pos ? t.pos[1] : 0" :fill="isHightlight(attr) ? 'red' : 'black'" font-size="12">
+                            {{ t.text }}
+                        </text>
+                    </g>
+                </g> -->
 
                 <!-- 其他 -->
                 <g v-for="key in data.userAddKeys">
@@ -327,7 +373,7 @@ text {
 
 /* 底图效果 */
 .base-map {
-    /* filter: grayscale(100%); */
+    filter: grayscale(100%);
 }
 
 /* 高亮样式 */

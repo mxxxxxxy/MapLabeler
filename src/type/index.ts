@@ -144,4 +144,21 @@ export interface User {
 }
 
 
+// 新图层实体的属性
+
+export interface LayerEntity {
+  id: string,
+  pos: [number, number],
+  fill: string,
+  tag: string,
+  text: [
+      {
+          pos: [number, number],
+          text: string,
+      }
+  ],
+  label: string
+}
+
+
 

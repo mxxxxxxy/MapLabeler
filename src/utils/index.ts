@@ -49,3 +49,58 @@ export const projectCoordinates = (lon:number, lat:number):[number,number] => {
     (39.99290359080193 - 39.98659063142852);
   return [x, y];
 };
+
+export const exportSVG = (svg: SVGElement) => {
+    // console.log(svg)
+    // 获取SVG数据
+    const svgData = new XMLSerializer().serializeToString(svg);
+    
+    // 创建Blob对象
+    const canvasBlob = new Blob([svgData], { type: 'image/svg+xml' });
+    
+    // 创建下载链接
+    const downloadUrl = URL.createObjectURL(canvasBlob);
+    
+    // 创建并触发点击事件
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.download = 'exported-svg.svg';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // 清理对象URL
+    URL.revokeObjectURL(downloadUrl);
+}
+
+
+export const exportJson =  (data, filename = 'data.json') => {
+  const jsonStr = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonStr], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  // a.remove(); // 用完移除a标签
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+
+export function getImageSize(url: string) {
+  return new Promise(function (resolve, reject) {
+      let image = new Image();
+      image.onload = function () {
+          resolve({
+              width: image.width,
+              height: image.height
+          });
+      };
+      image.onerror = function () {
+          reject(new Error('error'));
+      };
+      image.src = url;
+  });
+}

@@ -3,7 +3,9 @@ import './style.css'
 import 'font-awesome/css/font-awesome.min.css';
 import App from './App.vue'
 import { createPinia } from 'pinia';
-
-createApp(App)
-.use(createPinia())
-.mount('#app')
+import mitt from 'mitt';
+const emitter = mitt()
+const pinia = createPinia();
+const app = createApp(App)
+app.provide('emitter', emitter);
+app.use(pinia).mount('#app');
