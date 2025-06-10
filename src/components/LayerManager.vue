@@ -230,7 +230,7 @@
 <script setup>
 import * as d3 from 'd3'
 import { useStoreState, useStoreData } from "@/stores";
-import { ref, computed, watch, nextTick, useTemplateRef, inject, onMounted } from "vue";
+import { ref, computed, watch, nextTick, useTemplateRef, inject, onMounted, onUnmounted } from "vue";
 import edit from '@/assets/edit.svg'
 import add from '@/assets/add.svg'
 import deleteIcon from '@/assets/delete.svg'
@@ -428,6 +428,7 @@ const showEditPanel = (d) => {
 }
 
 const enableEdit = (d, layer) => {
+    // console.log(d, editDataDict.value)
     d.showEditPanel = true;
     if (d.enableEdit) {//结束修改
         state.editing = false;
@@ -447,11 +448,14 @@ const enableEdit = (d, layer) => {
         d.enableEdit = true;
     }
 }
-
-emitter.on('editElement', (d) => {
+const editElementHandler = (d) => {
     if (state.mode == 'layer') {
         enableEdit(d);
     }
+}
+emitter.on('editElement', editElementHandler)
+onUnmounted(() => {
+  emitter.off('editElement', editElementHandler)
 })
 
 function hoverGroup(layerChildren) {
@@ -582,7 +586,7 @@ watch(
         const group = hoveredSVGElement.node().parentNode;
         d3.select(group).raise();
         expandLayer.value = hoveredSVGElement.attr("belong")
-        if (state.mode === 'layer' && state.hoveredElement.tagName == 'path') {
+        if (state.mode === 'layer' && (state.hoveredElement.tagName == 'path' || state.hoveredElement.tagName == 'circle') ) {
             const LaylerId = "layer-" + hoveredSVGElement.attr('id');
             const selectedLayerItem = d3.select(`[id="${LaylerId}"]`);
             nextTick(() => {

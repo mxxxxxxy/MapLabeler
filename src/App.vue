@@ -7,7 +7,7 @@
     <div class="toolbar">
       <toolBar> </toolBar>
     </div>
-    <LayerManager :key="layerManagerComponentKey" :height="height * 0.85" :width="width / 5" :left="width / 100"
+    <LayerManager :key="layerManagerComponentKey" :height="height * 0.85" :width="width / 5 < 345.6 ? 345.6 : width / 5" :left="width / 100"
       :top="height / 10" ref="layerManager" />
     <Info></Info>
   </div>
@@ -79,7 +79,10 @@ emitter.on('downloadSvg', () => {
 
 const assignLabelById = (arr) => {
     arr.forEach((d) => {
-      d.label = d.id
+      if(d.id.includes('CHGIS')){
+        d.label = d.id.replace('CHGIS', '')
+      }
+      else{d.label = d.id;}
     })
 }
 
