@@ -28,16 +28,8 @@ const switch_data = function () {
 
 </script>
 
-<style scoped>
-.tool-bar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    width: 300px;
-    height: 500px;
-    position: relative;
-}
 
+<style>
 .btn {
     width: 150px;
     height: 35px;
@@ -51,6 +43,19 @@ const switch_data = function () {
     cursor: pointer;
     margin-bottom: 15px;
 }
+
+</style>
+
+<style scoped>
+.tool-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: fit-content;
+    height: fit-content;
+    position: relative;
+}
+
 
 
 .icon {
