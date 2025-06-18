@@ -32,18 +32,20 @@
 </template>
 
 <script setup>
-import Changan from '@/assets/TangData.json';
-import QuanTangData from '@/assets/QuanTangData.json';
+// import Changan from '@/assets/TangData.json';
+// import Silk from '@/assets/silk.json';
+// import QuanTangData from '@/assets/QuanTangData.json';
 import SvgPlotter from './components/SvgPlotter.vue';
 import LayerManager from './components/LayerManager.vue';
-import { exportJson } from "@/utils";
+import { exportJson, importJson, importImage } from "@/utils";
 import Info from './components/Info.vue';
 import { useStoreData, useStoreState } from './stores/index.js';
 import { getImageSize } from './utils/index'
 import { nextTick, ref, watch, useTemplateRef, toRaw, inject, onMounted } from 'vue';
 import toolBar from './components/toolBar.vue';
-import QuanTangPNG from '@/assets/QuanTang.png'
-import ChanganPNG from '@/assets/Changan.png'
+// import QuanTangPNG from '@/assets/QuanTang.png'
+// import SilkPNG from '@/assets/silk.png'
+// import ChanganPNG from '@/assets/Changan.png'
 // ------
 const emitter = inject('emitter');
 const svgPlotterRef = useTemplateRef('plotter')
@@ -104,13 +106,18 @@ const assignLabelById = (arr) => {
     })
 }
 
-const init = (selectedData) => {
-  if (selectedData == Changan) {
-    data.baseMapSource = ChanganPNG;
+
+const init = async () => {
+  const imgSrc = await importImage(state.usedDataName);
+  const selectedData = await importJson(state.usedDataName);
+  console.log(selectedData)
+  data.baseMapSource = imgSrc;
+  if (state.usedDataName == 'Changan') {
     state.mapOpacity = 0.2;
-  } else {
-    data.baseMapSource = QuanTangPNG;
+  } else if (state.usedDataName == 'QuanTang'){
     state.mapOpacity = 0.7;
+  } else if (state.usedDataName == 'silk'){
+    state.mapOpacity = 0.4;
   }
   getImageSize(data.baseMapSource).then(baseMapSize => {
     state.baseMapSize = baseMapSize;
@@ -124,26 +131,20 @@ const init = (selectedData) => {
     assignLabelById(data.layers[key]);
   }
   state.addLayerVisibility('baseMap');
+  layerManagerComponentKey.value += 1;  // 上述数据获取异步，layerManager挂载后收不到数据。因此结束后需要手动刷新layerManager
 }
 
 // onMounted(()=>{
 //   svgPlotterRef.value.centerMap();
 // })
-
-init(Changan);
+init();
 
 watch(
   () => state.usedDataName,
-  async (newDataName) => {
+  async () => {
     state.$reset();
     data.$reset();
-    if (newDataName === 'QuanTangData') {
-      init(QuanTangData);
-      // svgPlotterRef.value.centerMap();
-    } else if (newDataName === 'Changan') {
-      init(Changan);
-      // svgPlotterRef.value.centerMap();
-    }
+    init();
     layerManagerComponentKey.value += 1; // 手动刷新layerManager
   }
 )

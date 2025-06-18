@@ -7,7 +7,7 @@ export const useStoreState = defineStore('state', () => {
     const baseMapVisible: Ref<boolean> = ref(true);
     const baseMapSize: Ref<Object> = ref({});
 
-    const usedDataName: Ref<string> = ref("Changan");
+    const usedDataName: Ref<string> = ref("silk"); // QuanTang Changan silk
 
     const mapOpacity: Ref<number> = ref(0.2);
     const isExport: Ref<boolean> = ref(false);

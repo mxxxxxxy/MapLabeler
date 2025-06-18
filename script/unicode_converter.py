@@ -45,8 +45,10 @@ def extract_and_decode_ids(svg_file_path):
     return updated_svg_content
 
 if __name__ == "__main__":
-    svg_path = '../public/唐疆域669.svg' # 中文id未被正确解码
-    output_svg_path = '../public/tang.svg' # 中文id正确解码后的svg
+    # svg_path = '../public/唐疆域669.svg' # 中文id未被正确解码
+    # output_svg_path = '../public/tang.svg' # 中文id正确解码后的svg
+    svg_path = './silk.svg' # 中文id未被正确解码
+    output_svg_path = './silk.svg' # 中文id未被正确解码
     updated_svg_content = extract_and_decode_ids(svg_path)
     with open(output_svg_path, 'w', encoding='utf-8') as file:
         file.write(updated_svg_content)

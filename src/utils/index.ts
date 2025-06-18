@@ -104,3 +104,14 @@ export function getImageSize(url: string) {
       image.src = url;
   });
 }
+
+export async function importImage(dataName: string){
+  const res = await import(`@/assets/${dataName}.png`);
+  return res.default;
+}
+
+export async function importJson(dataName: string){
+  const res = await import(`@/assets/${dataName}.json`);
+  return res.default;
+}
+
